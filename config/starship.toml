@@ -1,0 +1,323 @@
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+[](#512D6D)\
+$os\
+$hostname\
+$username\
+[](bg:#781c33 fg:#512D6D)\
+$directory\
+[](fg:#781c33 bg:#bd0040)\
+$git_branch\
+$git_status\
+[](fg:#bd0040 bg:#0f4736)\
+$c\
+$cmake\
+$dotnet\
+$golang\
+$helm\
+$php\
+$java\
+$rust\
+$python\
+$conda\
+$terraform\
+$vagrant\
+[](fg:#0f4736 bg:#0f8259)\
+$docker_context\
+[](fg:#0f8259 bg:#509E2F)\
+$time\
+[ ](fg:#509E2F)\
+"""
+
+[os]
+style = "bg:#512D6D"
+disabled = false # Disabled by default
+
+[hostname]
+style = "bg:#512D6D"
+disabled = false
+ssh_only = true
+format = "[$ssh_symbol$hostname ]($style)"
+
+[username]
+style_user = "bg:#512D6D"
+style_root = "bg:#512D6D"
+format = "[$user ]($style)"
+
+
+[directory]
+read_only = " "
+style = "bg:#781c33"
+format = "[ $path ]($style)"
+truncation_length = 3
+truncation_symbol = ".../"
+
+
+[git_branch]
+symbol = ""
+style = "bg:#bd0040"
+format = '[ $symbol $branch ]($style)'
+
+[git_status]
+style = "bg:#bd0040"
+format = '[$all_status$ahead_behind ]($style)'
+
+[character] # The name of the module we are configuring is 'character'
+success_symbol = '[➜](bold green)'
+error_symbol = "[✗](bold red) "
+
+[cmd_duration]
+min_time = 500
+format = "took [$duration](bold yellow) "
+
+
+
+[directory.substitutions]
+"Documents" = ""
+"Downloads" = ""
+"Pictures" = ""
+"Документы" = ""
+"Загрузки" = ""
+"Изображения" = ""
+
+[time]
+disabled = false
+format = '[ $time ]($style)'
+time_format = "%H:%M:%S"
+utc_time_offset = "+7"
+style = "bg:#509E2F"
+
+[c]
+symbol = " "
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[cmake]
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[conda]
+symbol = " "
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[docker_context]
+symbol = " "
+style = "bg:#0f8259"
+format = '[ $symbol $context ]($style) $path'
+
+[dotnet]
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[golang]
+symbol = " "
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[helm]
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[java]
+symbol = " "
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[memory_usage]
+symbol = " "
+
+[package]
+symbol = " "
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[python]
+symbol = " "
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[rust]
+symbol = " "
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[terraform]
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[php]
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[vagrant]
+style = "bg:#0f4736"
+format = '[ $symbol ($version) ]($style)'
+
+[os.symbols]
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Emscripten = " "
+EndeavourOS = " "
+Fedora = " "
+FreeBSD = " "
+Garuda = "﯑ "
+Gentoo = " "
+HardenedBSD = "ﲊ "
+Illumos = " "
+Linux = " "
+Macos = " "
+Manjaro = " "
+Mariner = " "
+MidnightBSD = " "
+Mint = " "
+NetBSD = " "
+NixOS = " "
+OpenBSD = " "
+openSUSE = " "
+OracleLinux = " "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+Redox = " "
+Solus = "ﴱ "
+SUSE = " "
+Ubuntu = " "
+Unknown = " "
+Windows = " "
+
+
+[aws]
+disabled = true
+
+[azure]
+disabled = true
+
+# TODO: battery
+[battery]
+disabled = true
+
+[buf]
+disabled = true
+
+[bun]
+disabled = true
+
+[cobol]
+disabled = true
+
+[container]
+disabled = true
+
+[crystal]
+disabled = true
+
+[daml]
+disabled = true
+
+[dart]
+disabled = true
+
+[deno]
+disabled = true
+
+[elixir]
+disabled = true
+
+[elm]
+disabled = true
+
+[erlang]
+disabled = true
+
+[gcloud]
+disabled = true
+
+[guix_shell]
+disabled = true
+
+[haskell]
+disabled = true
+
+[haxe]
+disabled = true
+
+[kotlin]
+disabled = true
+
+[hg_branch]
+disabled = true
+
+[julia]
+disabled = true
+
+[lua]
+disabled = true
+
+[meson]
+disabled = true
+
+[nim]
+disabled = true
+
+[nix_shell]
+disabled = true
+
+[nodejs]
+disabled = true
+
+[opa]
+disabled = true
+
+[perl]
+disabled = true
+
+[pulumi]
+disabled = true
+
+[purescript]
+disabled = true
+
+[rlang]
+disabled = true
+
+[raku]
+disabled = true
+
+[red]
+disabled = true
+
+[ruby]
+disabled = true
+
+[scala]
+disabled = true
+
+[singularity]
+disabled = true
+
+[sudo]
+disabled = true
+
+[swift]
+disabled = true
+
+[vlang]
+disabled = true
+
+[vcsh]
+disabled = true
+
+[zig]
+disabled = true
+
+[spack]
+disabled = true

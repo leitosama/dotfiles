@@ -1,0 +1,23 @@
+- name: Install starship.rs
+  hosts: all
+  tasks:
+    - name: Install zsh
+      community.general.pacman:
+        name: zsh
+
+    - name: Install starship
+      community.general.pacman:
+        name: starship
+        state: present
+
+    - name: Configure starship
+      ansible.builtin.copy:
+        src: ./config/starship.toml
+        dest: ~/.config/starship.toml
+        mode: '0600'
+
+    - name: Set MOTD
+      ansible.builtin.copy:
+        src: ./config/motd
+        dest: /etc/motd
+        mode: '0600'
