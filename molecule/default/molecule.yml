@@ -3,4 +3,7 @@ driver:
   name: docker
 platforms:
   - name: instance
-    image: archlinux
+    image: archlinux:base-devel
+    pre_build_image: false
+provisioner:
+  name: ansible
