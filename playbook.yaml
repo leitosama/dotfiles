@@ -1,20 +1,46 @@
-- name: Install starship.rs
+- name: Dotfiles
   hosts: all
   tasks:
     - name: Install zsh
       community.general.pacman:
-        name: zsh
-
-    - name: Install starship
-      community.general.pacman:
-        name: starship
+        name:
+          - zsh
+          - starship
+          - git
         state: present
+
+    - name: Change default shell
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        shell: "/bin/zsh"
+        state: present
+
+    - name: Install antigen
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh
+        dest: ~/.antigen.zsh
+        status_code:
+          - 200
+          - 304
 
     - name: Configure starship
       ansible.builtin.copy:
         src: ./config/starship.toml
-        dest: ~/.config/starship.toml
+        dest: ~/.config/
         mode: '0600'
+
+    - name: Configure antigen
+      ansible.builtin.copy:
+        src: ./config/.antigenrc
+        dest: ~/.config/
+        mode: '0600'
+
+    - name: Configure zshrc
+      ansible.builtin.copy:
+        src: ./config/.zshrc
+        dest: ~/
+        mode: '0600'
+        backup: true
 
     - name: Set MOTD
       ansible.builtin.copy:
