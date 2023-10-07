@@ -1,5 +1,5 @@
 - name: Dotfiles
-  hosts: all
+  hosts: localhost
   tasks:
     - name: Install zsh
       community.general.pacman:
@@ -9,9 +9,15 @@
           - git
         state: present
 
+    - name: Get the username running the deploy
+      become: false
+      changed_when: false
+      command: whoami
+      register: whoami
+
     - name: Change default shell
       ansible.builtin.user:
-        name: "{{ ansible_user }}"
+        name: "{{ whoami.stdout }}"
         shell: "/bin/zsh"
         state: present
 
