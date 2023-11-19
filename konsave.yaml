@@ -1,0 +1,37 @@
+- name: Konsave
+  hosts: localhost
+  vars:
+    - env_shell: "{{ lookup('env', 'SHELL') }}"
+  tasks:
+    - name: Install pipx
+      community.general.pacman:
+        name:
+          - python-pipx
+        state: present
+
+    - name: Install konsave
+      community.general.pipx:
+        name: konsave
+        state: present
+
+    - name: Set up competitions (BASH)
+      ansible.builtin.lineinfile:
+        dest: ~/.bashrc
+        line: "eval \"$(register-python-argcomplete pipx)\""
+      when: '"bash" in env_shell'
+
+    - name: Set up competitions (ZSH)
+      ansible.builtin.lineinfile:
+        dest: ~/.bashrc
+        line: "eval \"$(register-python-argcomplete pipx)\""
+      when: '"zsh" in env_shell'
+
+    - name: Copy konsave profile
+      ansible.builtin.copy:
+        src: ./config/konsave
+        dest: ~/.config/
+        mode: '0700'
+
+    - name: Apply konsave
+      ansible.builtin.command:
+        cmd: /home/leito/.local/pipx/venvs/konsave/bin/konsave -a leito
