@@ -2,8 +2,10 @@
   hosts: localhost
   tasks:
     - name: Install zsh
+      become: true
       community.general.pacman:
         name:
+          - nerd-fonts
           - zsh
           - starship
           - git
@@ -16,6 +18,7 @@
       register: whoami
 
     - name: Change default shell
+      become: true
       ansible.builtin.user:
         name: "{{ whoami.stdout }}"
         shell: "/bin/zsh"
@@ -49,6 +52,7 @@
         backup: true
 
     - name: Set MOTD
+      become: true
       ansible.builtin.copy:
         src: ./config/motd
         dest: /etc/motd

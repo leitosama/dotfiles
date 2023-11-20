@@ -4,6 +4,7 @@
     - env_shell: "{{ lookup('env', 'SHELL') }}"
   tasks:
     - name: Install pipx
+      become: true
       community.general.pacman:
         name:
           - python-pipx
