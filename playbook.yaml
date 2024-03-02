@@ -9,6 +9,11 @@
           - zsh
           - starship
           - git
+          - neovim
+          - python-pynvim
+          - xclip
+          - xsel
+          - wl-clipboard
         state: present
 
     - name: Get the username running the deploy
@@ -57,3 +62,5 @@
         src: ./config/motd
         dest: /etc/motd
         mode: '0600'
+
+     
