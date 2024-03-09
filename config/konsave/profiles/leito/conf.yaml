@@ -41,7 +41,6 @@ save:
             - gtk-4.0
             - kate
             - Kvantum
-            - latte
             - dolphinrc
             - katerc
             - konsolerc
@@ -59,7 +58,6 @@ save:
             - plasmashellrc
             - gtkrc
             - gtkrc-2.0
-            - lattedockrc
             - breezerc
             - oxygenrc
             - lightlyrc

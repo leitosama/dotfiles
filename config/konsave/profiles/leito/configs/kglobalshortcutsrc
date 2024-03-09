@@ -1,12 +1,16 @@
 [ActivityManager]
 _k_friendly_name=Диспетчер комнат
 switch-to-activity-6af55b8b-fb74-4941-8160-7de1732d3ba4=none,none,Переключиться на комнату «Default»
+switch-to-activity-d9dde8ac-3b1c-4d24-badc-fd8aefc450e9=none,none,Переключиться на комнату «Default»
 
 [KDE Keyboard Layout Switcher]
+Switch keyboard layout to English (US)=none,none,Switch keyboard layout to English (US)
+Switch keyboard layout to Russian=none,none,Switch keyboard layout to Russian
 Switch keyboard layout to Russian (engineering, RU)=none,none,Сменить раскладку клавиатуры на Russian (engineering\\, RU)
 Switch keyboard layout to Английская (США)=none,none,Сменить раскладку клавиатуры на Английская (США)
 Switch keyboard layout to Русская=none,none,Сменить раскладку клавиатуры на Русская
-Switch to Next Keyboard Layout=Meta+Alt+K,none,Выбрать следующую раскладку клавиатуры
+Switch to Last-Used Keyboard Layout=Meta+Alt+L,Meta+Alt+L,
+Switch to Next Keyboard Layout=Meta+Alt+K,Meta+Alt+K,Выбрать следующую раскладку клавиатуры
 _k_friendly_name=Переключение раскладки клавиатуры
 
 [kaccess]
@@ -16,13 +20,8 @@ _k_friendly_name=Специальные возможности
 [kcm_touchpad]
 Disable Touchpad=Touchpad Off,Touchpad Off,Выключить сенсорную панель
 Enable Touchpad=Touchpad On,Touchpad On,Включить сенсорную панель
-Toggle Touchpad=Touchpad Toggle,Touchpad Toggle,Включить или выключить сенсорную панель
+Toggle Touchpad=Touchpad Toggle,Touchpad Toggle\tMeta+Ctrl+Zenkaku Hankaku,Включить или выключить сенсорную панель
 _k_friendly_name=Сенсорная панель
-
-[kded5]
-Show System Activity=Ctrl+Esc,Ctrl+Esc,Показать активность системы
-_k_friendly_name=KDE Daemon
-display=Display\tMeta+P,Display\tMeta+P,Сменить экран
 
 [khotkeys]
 _k_friendly_name=Служба пользовательских комбинаций клавиш
@@ -32,8 +31,10 @@ _k_friendly_name=Служба пользовательских комбинац�
 _k_friendly_name=Громкость
 decrease_microphone_volume=Microphone Volume Down,Microphone Volume Down,Уменьшить громкость микрофона
 decrease_volume=Volume Down,Volume Down,Уменьшить громкость
+decrease_volume_small=Shift+Volume Down,Shift+Volume Down,Уменьшить громкость на 1%
 increase_microphone_volume=Microphone Volume Up,Microphone Volume Up,Увеличить громкость микрофона
 increase_volume=Volume Up,Volume Up,Увеличить громкость
+increase_volume_small=Shift+Volume Up,Shift+Volume Up,Увеличить громкость на 1%
 mic_mute=Microphone Mute\tMeta+Volume Mute,Microphone Mute\tMeta+Volume Mute,Выключить микрофон
 mute=Volume Mute,Volume Mute,Выключить звук
 
@@ -42,20 +43,26 @@ Halt Without Confirmation=none,,Выключить компьютер без п�
 Lock Session=Meta+L\tScreensaver,Meta+L\tScreensaver,Заблокировать сеанс
 Log Out=Ctrl+Alt+Del,Ctrl+Alt+Del,Завершить сеанс
 Log Out Without Confirmation=none,,Завершить сеанс без подтверждения
+Reboot=none,,Перезагрузить компьютер
 Reboot Without Confirmation=none,,Перезагрузить компьютер без подтверждения
+Shut Down=none,,Выключить компьютер
 _k_friendly_name=Управление сеансами
 
 [kwin]
 Activate Window Demanding Attention=Meta+Ctrl+A,Meta+Ctrl+A,Активировать окно\\, требующее внимания
+Cycle Overview=none,none,Переключение между режимом обзора и просмотром сеткой
+Cycle Overview Opposite=none,none,Переключение между просмотром сеткой и режимом обзора
 Decrease Opacity=none,,Уменьшить непрозрачность окна на 5%
 Edit Tiles=Meta+T,Meta+T,Изменить раскладку мозаики окон
 Expose=Ctrl+F9,Ctrl+F9,Показать все окна с текущего рабочего стола
-ExposeAll=Ctrl+F10\tLaunch (C),Ctrl+F10\tLaunch (C),Показать все окна со всех рабочих столов
+ExposeAll=Ctrl+F10\tLaunch (C),Ctrl+F10\tLaunch (C),Показать все окна со всех рабочих столов\s
 ExposeClass=Ctrl+F7,Ctrl+F7,Показать окна одного класса
 ExposeClassCurrentDesktop=none,none,Показать все окна одного класса с текущего рабочего стола
+Grid View=Meta+G,Meta+G,Включить или отключить режим просмотра сеткой
 Increase Opacity=none,,Увеличить непрозрачность окна на 5%
 Invert Screen Colors=none,none,Инвертировать цвета экрана
 Kill Window=Meta+Ctrl+Esc,Meta+Ctrl+Esc,Принудительно закрыть окно
+Move Tablet to Next Output=none,none,Переключить планшет к следующему выходу
 MoveMouseToCenter=Meta+F6,Meta+F6,Переместить мышь в центр
 MoveMouseToFocus=Meta+F5,Meta+F5,Переместить мышь в фокус ввода
 MoveZoomDown=none,none,Переместить увеличенную область вниз
@@ -113,12 +120,12 @@ Switch to Screen to the Left=none,,Переключиться на экран с
 Switch to Screen to the Right=none,,Переключиться на экран справа
 Toggle Night Color=none,none,Включить или отключить ночную цветовую схему
 Toggle Window Raise/Lower=none,,Переключить передний/задний план
-Walk Through Desktop List=none,,По списку рабочих столов вперёд
-Walk Through Desktop List (Reverse)=none,,По списку рабочих столов назад
-Walk Through Desktops=none,,На один рабочий стол вперёд
-Walk Through Desktops (Reverse)=none,,На один рабочий стол назад
+Walk Through Desktop List=none,none,По списку рабочих столов вперёд
+Walk Through Desktop List (Reverse)=none,none,По списку рабочих столов назад
+Walk Through Desktops=none,none,На один рабочий стол вперёд
+Walk Through Desktops (Reverse)=none,none,На один рабочий стол назад
 Walk Through Windows=Alt+Tab,Alt+Tab,На одно окно вперёд
-Walk Through Windows (Reverse)=Alt+Shift+Backtab,Alt+Shift+Backtab,На одно окно назад
+Walk Through Windows (Reverse)=Alt+Shift+Backtab,Alt+Shift+Tab,На одно окно назад
 Walk Through Windows Alternative=none,,На одно окно вперёд (альтернативный режим)
 Walk Through Windows Alternative (Reverse)=none,,На одно окно назад (альтернативный режим)
 Walk Through Windows of Current Application=Alt+`,Alt+`,На одно окно вперёд текущего приложения
@@ -144,10 +151,10 @@ Window One Desktop Down=Meta+Ctrl+Shift+Down,Meta+Ctrl+Shift+Down,Окно на 
 Window One Desktop Up=Meta+Ctrl+Shift+Up,Meta+Ctrl+Shift+Up,Окно на один рабочий стол вверх
 Window One Desktop to the Left=Meta+Ctrl+Shift+Left,Meta+Ctrl+Shift+Left,Окно на один рабочий стол влево
 Window One Desktop to the Right=Meta+Ctrl+Shift+Right,Meta+Ctrl+Shift+Right,Окно на один рабочий стол вправо
-Window One Screen Down=none,,Window One Screen Down
-Window One Screen Up=none,,Window One Screen Up
-Window One Screen to the Left=none,,Window One Screen to the Left
-Window One Screen to the Right=none,,Window One Screen to the Right
+Window One Screen Down=none,,Переместить окно на один экран вниз
+Window One Screen Up=none,,Переместить окно на один экран вверх
+Window One Screen to the Left=none,,Переместить окно на один экран влево
+Window One Screen to the Right=none,,Переместить окно на один экран вправо
 Window Operations Menu=none,Alt+F3,Меню действий с окном
 Window Pack Down=none,,Переместить окно вниз
 Window Pack Left=none,,Переместить окно влево
@@ -200,7 +207,7 @@ Window to Screen 6=none,,Переместить окно на экран 6
 Window to Screen 7=none,,Переместить окно на экран 7
 _k_friendly_name=KWin
 view_actual_size=none,Meta+0,Фактический размер
-view_zoom_in=Meta++\tMeta+=,Meta++,Увеличить
+view_zoom_in=Meta++\tMeta+=,Meta++\tMeta+=,Увеличить
 view_zoom_out=Meta+-,Meta+-,Уменьшить
 
 [lattedock]
@@ -224,6 +231,7 @@ activate entry 6=none,Meta+6,Активировать объект 6
 activate entry 7=none,Meta+7,Активировать объект 7
 activate entry 8=none,Meta+8,Активировать объект 8
 activate entry 9=none,Meta+9,Активировать объект 9
+activate widget 483=Alt+Space,none,Сделать виджет «Меню запуска приложений» активным
 clear-history=none,none,Очистить журнал буфера обмена
 clipboard_action=none,Meta+Ctrl+X,Всплывающее меню автоматических действий
 cycleNextAction=none,none,Следующая запись журнала
@@ -253,67 +261,37 @@ show latte global settings=none,Meta+W,Открыть глобальные на�
 show latte view=Meta+`,Meta+`,Открыть панель Latte
 show view settings=Meta+A,Meta+A,Переключение между окнами параметров доков и панелей
 show-barcode=none,none,Показать штрихкод…
-show-on-mouse-pos=none,Meta+V,Открывать Klipper на позиции указателя мыши
+show-on-mouse-pos=none,Meta+V,Показать записи на позиции указателя мыши
 
 [mediacontrol]
 _k_friendly_name=Управление медиапроигрывателем
-mediavolumedown=none,none,Уменьшить громкость
-mediavolumeup=none,none,Увеличить громкость
+mediavolumedown=none,,Уменьшить громкость
+mediavolumeup=none,,Увеличить громкость
 nextmedia=Media Next,Media Next,Перейти к следующей дорожке
 pausemedia=Media Pause,Media Pause,Приостановить воспроизведение
-playmedia=none,none,Начать воспроизведение
+playmedia=none,,Начать воспроизведение
 playpausemedia=Media Play,Media Play,Начать/приостановить воспроизведение
 previousmedia=Media Previous,Media Previous,Перейти к предыдущей дорожке
 stopmedia=Media Stop,Media Stop,Остановить воспроизведение
 
-[org.kde.dolphin.desktop]
-_k_friendly_name=Dolphin
-_launch=Meta+E,Meta+E,Dolphin
-
-[org.kde.kcalc.desktop]
-_k_friendly_name=KCalc
-_launch=Launch (1),Launch (1),KCalc
-
-[org.kde.konsole.desktop]
-NewTab=none,none,Открыть новую вкладку
-NewWindow=none,none,Открыть новое окно
-_k_friendly_name=Konsole
-_launch=Ctrl+Alt+T,Ctrl+Alt+T,Konsole
-
-[org.kde.krunner.desktop]
-RunClipboard=Alt+Shift+F2,Alt+Shift+F2,Run command on clipboard contents
-_k_friendly_name=KRunner
-_launch=Alt+Space\tAlt+F2\tSearch,Alt+Space\tAlt+F2\tSearch,KRunner
-
-[org.kde.plasma.emojier.desktop]
-_k_friendly_name=Emoji Selector
-_launch=Meta+.,Meta+.,Emoji Selector
-
-[org.kde.spectacle.desktop]
-ActiveWindowScreenShot=Meta+Print,Meta+Print,Сделать снимок активного окна
-CurrentMonitorScreenShot=none,none,Сделать снимок текущего экрана
-FullScreenScreenShot=Shift+Print,Shift+Print,Сделать снимок всех экранов
-OpenWithoutScreenshot=none,none,Запускать Spectacle без создания снимка
-RectangularRegionScreenShot=Meta+Shift+Print,Meta+Shift+Print,Сделать снимок прямоугольной области экрана
-WindowUnderCursorScreenShot=Meta+Ctrl+Print,Meta+Ctrl+Print,Создать снимок окна под курсором мыши
-_k_friendly_name=Spectacle
-_launch=Print,Print,Запустить Spectacle
-
 [org_kde_powerdevil]
 Decrease Keyboard Brightness=Keyboard Brightness Down,Keyboard Brightness Down,Уменьшить яркость подсветки клавиатуры
 Decrease Screen Brightness=Monitor Brightness Down,Monitor Brightness Down,Уменьшить яркость экрана
-Hibernate=Hibernate,Hibernate,Перейти в спящий режим
+Decrease Screen Brightness Small=Shift+Monitor Brightness Down,Shift+Monitor Brightness Down,Уменьшить яркость экрана на 1%
+Hibernate=Hibernate,Hibernate,Перейти в режим гибернации
 Increase Keyboard Brightness=Keyboard Brightness Up,Keyboard Brightness Up,Увеличить яркость подсветки клавиатуры
 Increase Screen Brightness=Monitor Brightness Up,Monitor Brightness Up,Увеличить яркость экрана
+Increase Screen Brightness Small=Shift+Monitor Brightness Up,Shift+Monitor Brightness Up,Увеличить яркость экрана на 1%
 PowerDown=Power Down,Power Down,Отключить питание
 PowerOff=Power Off,Power Off,Выключить
-Sleep=Sleep,Sleep,Перейти в ждущий режим
+Sleep=Sleep,Sleep,Перейти в спящий режим
 Toggle Keyboard Backlight=Keyboard Light On/Off,Keyboard Light On/Off,Сменить состояние подсветки клавиатуры
 Turn Off Screen=none,none,Выключить монитор
-_k_friendly_name=Управление питанием
+_k_friendly_name=Система управления питанием KDE
+powerProfile=Battery,Battery\tMeta+B,Переключить профиль энергопотребления
 
 [plasmashell]
-_k_friendly_name=Plasma
+_k_friendly_name=plasmashell
 activate task manager entry 1=Meta+1,Meta+1,Открыть 1-ю кнопку на панели задач
 activate task manager entry 10=Meta+0,Meta+0,Открыть 10-ю кнопку на панели задач
 activate task manager entry 2=Meta+2,Meta+2,Открыть 2-ю кнопку на панели задач
@@ -324,8 +302,10 @@ activate task manager entry 6=Meta+6,Meta+6,Открыть 6-ю кнопку н�
 activate task manager entry 7=Meta+7,Meta+7,Открыть 7-ю кнопку на панели задач
 activate task manager entry 8=Meta+8,Meta+8,Открыть 8-ю кнопку на панели задач
 activate task manager entry 9=Meta+9,Meta+9,Открыть 9-ю кнопку на панели задач
+activate widget 126=none,none,Сделать виджет «Цифровые часы» активным
+activate widget 178=Meta,none,Сделать виджет «Меню запуска приложений» активным
 activate widget 24=none,none,Сделать виджет «Меню запуска приложений» активным
-activate widget 3=Alt+F1,none,Сделать виджет «Меню запуска приложений» активным
+activate widget 3=none,none,Сделать виджет «Меню запуска приложений» активным
 activate widget 45=none,none,Сделать виджет «Меню запуска приложений» активным
 activate widget 68=none,none,Сделать виджет «Меню запуска приложений» активным
 clear-history=none,,Очистить журнал буфера обмена
@@ -333,7 +313,7 @@ clipboard_action=Meta+Ctrl+X,Meta+Ctrl+X,Всплывающее меню авт�
 cycle-panels=Meta+Alt+P,Meta+Alt+P,Перемещение фокуса ввода с клавиатуры между панелями
 cycleNextAction=none,,Следующая запись журнала
 cyclePrevAction=none,,Предыдущая запись журнала
-edit_clipboard=none,,Редактирование буфера обмена…
+edit_clipboard=none,none,Edit Contents…
 manage activities=Meta+Q,Meta+Q,Показать переключатель комнат
 next activity=Meta+Tab,none,На одну комнату вперёд
 previous activity=Meta+Shift+Tab,none,На одну комнату назад
@@ -346,11 +326,8 @@ switch to next activity=none,,Переключиться в следующую �
 switch to previous activity=none,,Переключиться в предыдущую комнату
 toggle do not disturb=none,,Включение и отключение режима «Не беспокоить»
 
-[systemsettings.desktop]
-_k_friendly_name=System Settings
-_launch=Tools,Tools,System Settings
-kcm-kscreen=none,none,Display Configuration
-kcm-lookandfeel=none,none,Global Theme
-kcm-users=none,none,Users
-powerdevilprofilesconfig=none,none,Energy Saving
-screenlocker=none,none,Screen Locking
+[services][org.kde.krunner.desktop]
+_launch=Meta+Space\tAlt+F2\tSearch
+
+[services][org.kde.spectacle.desktop]
+RecordWindow=none

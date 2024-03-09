@@ -6,8 +6,18 @@ Id_1=88a135b7-f8f2-4dc3-abeb-045299a068c8
 Number=1
 Rows=1
 
+[ModifierOnlyShortcuts]
+Meta=org.kde.krunner,/App,,toggleDisplay
+
+[NightColor]
+Active=true
+NightTemperature=2800
+
 [Tiling]
 padding=4
+
+[Tiling][151e50a8-29d1-5c77-88b4-d4845d3a670c]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
 [Tiling][191c95f7-1c97-5dcc-a796-554391f95a4d]
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
@@ -15,10 +25,19 @@ tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"wi
 [Tiling][213a9620-187e-58a6-b80b-85d8fb95dfce]
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
+[Tiling][34128cbe-9c20-59d3-aee7-134285bae0ba]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
 [Tiling][46e0bfe8-4fe0-55c2-bc8e-5d58cbfd682f]
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
+[Tiling][8dbf7f57-fe21-5762-b6b2-0d17ae39b6e7]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
 [Tiling][9ba3d737-2b1d-5db8-a6ef-ac0e7a40c8eb]
+tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
+
+[Tiling][a43cee98-2f84-5e77-bfaa-37f99bb461c3]
 tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"width":0.25}]}
 
 [Tiling][d9b7fb71-96e2-56c1-9f04-61a761b2d0ba]
@@ -29,3 +48,6 @@ tiles={"layoutDirection":"horizontal","tiles":[{"width":0.25},{"width":0.5},{"wi
 
 [Windows]
 BorderlessMaximizedWindows=false
+
+[Xwayland]
+Scale=1

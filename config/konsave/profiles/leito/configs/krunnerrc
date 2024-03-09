@@ -1,2 +1,11 @@
+[General]
+FreeFloating=true
+
 [PlasmaRunnerManager]
 migrated=true
+
+[Plugins]
+plasma-runner-neochatEnabled=true
+
+[Plugins][Favorites]
+plugins=krunner_services
