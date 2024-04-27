@@ -5,7 +5,7 @@
       become: true
       community.general.pacman:
         name:
-          - nerd-fonts
+          - ttf-hack-nerd
           - zsh
           - starship
           - git

@@ -1,7 +1,7 @@
 source $HOME/.antigen.zsh
 
 antigen init < $HOME/.config/.antigenrc
-export PATH=$PATH:$HOME/.local/bin:$HOME/go/bin
+export PATH=$PATH:$HOME/.local/bin:$HOME/go/bin:$HOME/.pdtm/go/bin
 eval "$(starship init zsh)"
 alias vim="nvim"
 alias vi="nvim"
