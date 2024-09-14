@@ -9,8 +9,7 @@
           - zsh
           - starship
           - git
-          - neovim
-          - python-pynvim
+          - vim
           - xclip
           - xsel
           - wl-clipboard
