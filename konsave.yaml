@@ -2,18 +2,29 @@
   hosts: localhost
   vars:
     - env_shell: "{{ lookup('env', 'SHELL') }}"
+    - packages: {
+           ArchLinux: [python-pipx, python-setuptools],
+           Debian: [python-pipx, python-setuptools],
+           RedHat: [pipx, python-setuptools]
+      }
   tasks:
+    - name: (debug) Show OS Family
+      debug:
+        msg: "OS Family is {{ ansible_os_family }}, package manager - {{ ansible_pkg_mgr }}"
     - name: Install pipx
       become: true
-      community.general.pacman:
-        name:
-          - python-pipx
+      ansible.builtin.package:
+        name: "{{ packages[ansible_os_family] }}"
         state: present
 
     - name: Install konsave
       community.general.pipx:
         name: konsave
         state: present
+    
+    - name: Install setuptools for konsave
+      ansible.builtin.command:
+        cmd: pipx runpip konsave install setuptools
 
     - name: Set up competitions (BASH)
       ansible.builtin.lineinfile:
@@ -35,4 +46,4 @@
 
     - name: Apply konsave
       ansible.builtin.command:
-        cmd: /home/leito/.local/pipx/venvs/konsave/bin/konsave -a leito
+        cmd: konsave -a leito
