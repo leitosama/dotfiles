@@ -9,6 +9,12 @@
           - zsh
           - git
           - vim
+    - name: Copy config -> dotfiles
+      ansible.builtin.git:
+        repo: https://github.com/leitosama/dotfiles.git
+        dest: ~/.dotfiles/
+        version: dev
+        single_branch: true
 
     - name: Fetch starship
       ansible.builtin.uri:
@@ -43,21 +49,23 @@
         mode: '0660'
 
     - name: Configure starship
-      ansible.builtin.copy:
-        src: ./config/starship.toml
-        dest: ~/.config/
+      ansible.builtin.file:
+        src: ~/.dotfiles/config/starship.toml
+        dest: ~/.config/starship.toml
+        state: link
         mode: '0600'
 
     - name: Configure antigen
-      ansible.builtin.copy:
-        src: ./config/.antigenrc
-        dest: ~/.config/
+      ansible.builtin.file:
+        src: ~/.dotfiles/config/.antigenrc
+        dest: ~/.config/.antigenrc
         mode: '0600'
+        state: link
 
     - name: Configure zshrc
-      ansible.builtin.copy:
-        src: ./config/.zshrc
-        dest: ~/
+      ansible.builtin.file:
+        src: ~/.dotfiles/config/.zshrc
+        dest: ~/.zshrc
         mode: '0600'
-        backup: true
+        state: link
 
