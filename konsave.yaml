@@ -40,7 +40,7 @@
 
     - name: Copy konsave profile
       ansible.builtin.copy:
-        src: ./config/konsave
+        src: ./konsave
         dest: ~/.config/
         mode: '0700'
 
