@@ -25,7 +25,9 @@ alias git-github="git config --global user.name leitosama;git config --global us
 alias lessh='LESSOPEN="| /usr/bin/src-hilite-lesspipe.sh %s" less -M '
 bindkey "^[[1;5C" forward-word
 bindkey "^[[1;5D" backward-word
-source $HOME/.yandex-cloud/completion.zsh.inc
+if [[ -f $HOME/.yandex-cloud/completion.zsh.inc ]]; then
+     source $HOME/.yandex-cloud/completion.zsh.inc
+fi
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
