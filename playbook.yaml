@@ -9,7 +9,13 @@
           - zsh
           - git
           - vim
-    - name: Copy config -> dotfiles
+    - name: Create .config folder
+      ansible.builtin.file:
+        state: directory
+        mode: '0770'
+        path: ~/.config/
+    
+    - name: Clone dotfiles
       ansible.builtin.git:
         repo: https://github.com/leitosama/dotfiles.git
         dest: ~/.dotfiles/
