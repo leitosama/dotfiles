@@ -49,7 +49,7 @@
 
     - name: Install antigen
       ansible.builtin.uri:
-        url: https://raw.githubusercontent.com/zsh-users/antigen/master/bin/antigen.zsh
+        url: https://raw.githubusercontent.com/zsh-users/antigen/8846aa9/bin/antigen.zsh
         dest: ~/.antigen.zsh
         status_code:
           - 200
