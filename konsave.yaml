@@ -17,6 +17,16 @@
         name: "{{ packages[ansible_os_family] }}"
         state: present
 
+    - name: Install X11/Wayland packages
+      become: true
+      ansible.builtin.package:
+        name:
+          - xclip
+          - xsel
+          - wl-clipboard
+        state: present
+
+
     - name: Install konsave
       community.general.pipx:
         name: konsave

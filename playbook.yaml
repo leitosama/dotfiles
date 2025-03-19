@@ -23,17 +23,6 @@
         stdin: "{{ starship_installer.content }}"
         creates: /usr/local/bin/starship
 
-    - name: Install X11/Wayland packages
-      tags:
-        - kde
-      become: true
-      ansible.builtin.package:
-        name:
-          - xclip
-          - xsel
-          - wl-clipboard
-        state: present
-
     - name: Get the username running the deploy
       become: false
       changed_when: false
