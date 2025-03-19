@@ -48,12 +48,10 @@
         state: present
 
     - name: Install antigen
-      ansible.builtin.uri:
+      ansible.builtin.get_url:
         url: https://raw.githubusercontent.com/zsh-users/antigen/8846aa9/bin/antigen.zsh
         dest: ~/.antigen.zsh
-        status_code:
-          - 200
-          - 304
+        mode: '0660'
 
     - name: Configure starship
       ansible.builtin.copy:
