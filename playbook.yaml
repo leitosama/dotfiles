@@ -2,7 +2,7 @@
   hosts: all
   tasks:
     - name: Install zsh
-      become: true
+      become: "{{ 'false' if ansible_facts['os_family'] == 'Darwin' else 'true' }}"
       ansible.builtin.package:
         name:
           # - ttf-hack-nerd
@@ -74,9 +74,3 @@
         mode: '0600'
         backup: true
 
-    - name: Set MOTD
-      become: true
-      ansible.builtin.copy:
-        src: ./config/motd
-        dest: /etc/motd
-        mode: '0600'
