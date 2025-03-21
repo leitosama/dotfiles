@@ -1,5 +1,11 @@
 - name: Dotfiles
   hosts: all
+  vars:
+    dotfiles_path: ~/.dotfiles/config
+    configs:
+      - { src: "{{ dotfiles_path }}/starship.toml", dest: "~/.config/starship.toml" }
+      - { src: "{{ dotfiles_path }}/.antigenrc", dest: "~/.config/.antigenrc" }
+      - { src: "{{ dotfiles_path }}/.zshrc", dest: "~/.zshrc"}
   tasks:
     - name: Install zsh
       become: "{{ 'false' if ansible_facts['os_family'] == 'Darwin' else 'true' }}"
@@ -14,7 +20,7 @@
         state: directory
         mode: '0770'
         path: ~/.config/
-    
+
     - name: Clone dotfiles
       ansible.builtin.git:
         repo: https://github.com/leitosama/dotfiles.git
@@ -54,24 +60,16 @@
         dest: ~/.antigen.zsh
         mode: '0660'
 
-    - name: Configure starship
+    - name: Delete old files
       ansible.builtin.file:
-        src: ~/.dotfiles/config/starship.toml
-        dest: ~/.config/starship.toml
-        state: link
-        mode: '0600'
+        path: "{{ item.dest }}"
+        state: absent
+      loop: "{{ configs }}"
 
-    - name: Configure antigen
+    - name: Link configs to paths
       ansible.builtin.file:
-        src: ~/.dotfiles/config/.antigenrc
-        dest: ~/.config/.antigenrc
-        mode: '0600'
-        state: link
-
-    - name: Configure zshrc
-      ansible.builtin.file:
-        src: ~/.dotfiles/config/.zshrc
-        dest: ~/.zshrc
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
         mode: '0600'
         state: link
-
+      loop: "{{ configs }}"
