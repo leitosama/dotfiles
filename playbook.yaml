@@ -4,7 +4,6 @@
     dotfiles_path: ~/.dotfiles/config
     configs:
       - { src: "{{ dotfiles_path }}/starship.toml", dest: "~/.config/starship.toml" }
-      - { src: "{{ dotfiles_path }}/.antigenrc", dest: "~/.config/.antigenrc" }
       - { src: "{{ dotfiles_path }}/.zshrc", dest: "~/.zshrc"}
   tasks:
     - name: Install zsh

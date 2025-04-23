@@ -12,7 +12,7 @@ else
 
     # I'm using antigen-init here but your usual antigen-bundle,
     # antigen-theme, antigen-apply will work as well
-    antigen init $HOME/.config/.antigenrc
+    antigen init $HOME/.dotfiles/config/.antigenrc
 fi
 
 export PATH=$PATH:$HOME/.local/bin:$HOME/go/bin:$HOME/.pdtm/go/bin:$HOME/.yandex-cloud/bin
@@ -28,6 +28,7 @@ bindkey "^[[1;5D" backward-word
 if [[ -f $HOME/.yandex-cloud/completion.zsh.inc ]]; then
      source $HOME/.yandex-cloud/completion.zsh.inc
 fi
+source $HOME/.dotfiles/config/oc.completion.zsh
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
