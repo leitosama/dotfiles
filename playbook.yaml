@@ -45,9 +45,10 @@
       changed_when: false
       ansible.builtin.command: whoami
       register: whoami
-
+   
     - name: Change default shell
       become: true
+      ignore_errors: true
       ansible.builtin.user:
         name: "{{ whoami.stdout }}"
         shell: "/bin/zsh"
