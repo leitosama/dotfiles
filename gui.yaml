@@ -1,0 +1,119 @@
+- name: GUI Install (Fedora only)
+  hosts: all
+  vars:
+    dotfiles_path: ~/.dotfiles/config
+    kde_dotconfig_src: "{{ dotfiles_path }}/gui_config/kde_dotconfig"
+    kde_dotlocal_share_src: "{{ dotfiles_path }}/gui_config/kde_dotlocal_share_src"
+    kde_packages:
+      - { dnf: okular, flatpak: org.kde.okular }
+      - { dnf: gwenview, flatpak: org.kde.gwenview }
+      - { dnf: kcalc, flatpak: org.kde.kcalc }
+      - { dnf: krdc, flatpak: org.kde.krdc }
+      - { dnf: filelight, flatpak: org.kde.filelight }
+      - { dnf: kwalletmanager, flatpak: org.kde.kwalletmanager5 }
+      - { dnf: kleopatra, flatpak: org.kde.kleopatra }
+      - { dnf: kamoso, flatpak: org.kde.kamoso }
+    kde_dotconfig:
+      # https://github.com/shalva97/kde-configuration-files
+      # Save some GTK Themes?
+      - gtk-2.0
+      - gtk-3.0
+      - gtk-4.0
+      # Themes
+      - kdeglobals
+      - kscreenlockerrc # Lockscreen settings, links to your image(!)
+      - kwinrc # Window tiling, Night color
+      - plasmarc # userWallpapers?
+      - Trolltech.conf # color scheme
+      # - breezerc # Default breezerc theme settings
+      # - kcmfonts # Not found
+      # Personalization
+      - plasmanotifyrc # Notify settings
+      - plasma-localerc # locale
+      - ktimezonedrc # Timezone
+      - kaccessrc # Acessability
+      - mimeapps.list # File association
+      - user-dirs.dirs # User dirs overwrite
+      # Hardware
+      - kcminputrc
+      - kglobalshortcutsrc # Shortcuts
+      - krunnerrc # WTF?
+      - ksmserverrc # WTF?
+      - kwinrc
+      - khotkeysrc
+      - plasma-org.kde.plasma.desktop-appletsrc # Also prints desktop entries needed to be deleted
+    kde_dotlocal_share:
+      - konsole
+  tasks:
+    - name: (debug) Show OS Family
+      ansible.builtin.debug:
+        msg: "OS Family is {{ ansible_os_family }}, package manager - {{ ansible_pkg_mgr }}"
+
+    - name: Install X11/Wayland packages for clipboard
+      become: true
+      ansible.builtin.dnf:
+        name:
+          - xclip
+          - xsel
+          - wl-clipboard
+        state: present
+        update_cache: true
+
+    - name: Install KDE
+      become: true
+      ansible.builtin.dnf:
+        name:
+          - "@kde-desktop-environment"
+        exclude:
+          - kwrite
+        state: present
+        update_cache: true
+
+    - name: Ensure userspace programs are not installed
+      become: true
+      ansible.builtin.dnf:
+        name: "{{ kde_packages | map(attribute='dnf') | list }}"
+        state: absent
+        skip_broken: true
+        autoremove: true
+
+    - name: Install flatpak version of userspace programs
+      community.general.flatpak:
+        method: user
+        state: present
+        name: "{{ kde_packages | map(attribute='flatpak') | list }}"
+
+    - name: Clone dotfiles
+      ansible.builtin.git:
+        repo: https://github.com/leitosama/dotfiles.git
+        dest: ~/.dotfiles/
+        version: dev
+        single_branch: true
+
+    - name: (.config) Delete old files
+      ansible.builtin.file:
+        path: "~/.config/{{ item }}"
+        state: absent
+      loop: "{{ kde_dotconfig }}"
+
+    - name: (.config) Link configs to paths
+      ansible.builtin.file:
+        src: "{{ kde_dotconfig_src }}/{{ item }}"
+        dest: "~/.config/{{ item }}"
+        mode: '0600'
+        state: link
+      loop: "{{ kde_dotconfig }}"
+
+    - name: (.local/share) Delete old files
+      ansible.builtin.file:
+        path: "~/.local/share/{{ item }}"
+        state: absent
+      loop: "{{ kde_dotlocal_share }}"
+
+    - name: (.local/share) Link configs to paths
+      ansible.builtin.file:
+        src: "{{ kde_dotlocal_share_src }}/{{ item }}"
+        dest: "~/.local/share/{{ item }}"
+        mode: '0600'
+        state: link
+      loop: "{{ kde_dotlocal_share }}"
