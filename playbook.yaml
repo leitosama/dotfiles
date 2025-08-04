@@ -45,7 +45,7 @@
       changed_when: false
       ansible.builtin.command: whoami
       register: whoami
-   
+
     - name: Change default shell
       become: true
       ignore_errors: true

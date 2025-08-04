@@ -1,7 +1,7 @@
 - name: GUI Install (Fedora only)
   hosts: all
   vars:
-    dotfiles_path: ~/.dotfiles/config
+    dotfiles_path: ~/.dotfiles/
     kde_dotconfig_src: "{{ dotfiles_path }}/gui_config/kde_dotconfig"
     kde_dotlocal_share_src: "{{ dotfiles_path }}/gui_config/kde_dotlocal_share_src"
     kde_packages:
@@ -89,6 +89,7 @@
         dest: ~/.dotfiles/
         version: dev
         single_branch: true
+        update: true
 
     - name: (.config) Delete old files
       ansible.builtin.file:
