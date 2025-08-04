@@ -1,9 +1,9 @@
 - name: GUI Install (Fedora only)
   hosts: all
   vars:
-    dotfiles_path: ~/.dotfiles/
+    dotfiles_path: ~/.dotfiles
     kde_dotconfig_src: "{{ dotfiles_path }}/gui_config/kde_dotconfig"
-    kde_dotlocal_share_src: "{{ dotfiles_path }}/gui_config/kde_dotlocal_share_src"
+    kde_dotlocal_share_src: "{{ dotfiles_path }}/gui_config/kde_dotlocal_share"
     kde_packages:
       - { dnf: okular, flatpak: org.kde.okular }
       - { dnf: gwenview, flatpak: org.kde.gwenview }
