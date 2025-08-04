@@ -2,3 +2,4 @@
 inventory.ini
 .ansible
 config/.antigenrc.zwc
+bookmarks.xml*
