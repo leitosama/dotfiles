@@ -54,11 +54,17 @@
         shell: "/bin/zsh"
         state: present
 
-    - name: Install antigen
-      ansible.builtin.get_url:
-        url: https://raw.githubusercontent.com/zsh-users/antigen/8846aa9/bin/antigen.zsh
-        dest: ~/.antigen.zsh
-        mode: '0660'
+    - name: Fetch Zi
+      ansible.builtin.uri:
+        url: https://get.zshell.dev
+        return_content: true
+      register: zi_installer
+
+    - name: Install Zi
+      ansible.builtin.command:
+        cmd: "sh -s -- -y"
+        stdin: "{{ zi_installer.content }}"
+        creates: ~/.zi/bin/zi.zsh
 
     - name: Delete old files
       ansible.builtin.file:
