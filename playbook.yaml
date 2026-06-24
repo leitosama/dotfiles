@@ -56,7 +56,7 @@
 
     - name: Fetch Zi
       ansible.builtin.uri:
-        url: https://get.zshell.dev
+        url: https://raw.githubusercontent.com/z-shell/src/refs/heads/main/public/sh/install.sh
         return_content: true
       register: zi_installer
 
