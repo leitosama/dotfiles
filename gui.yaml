@@ -32,7 +32,7 @@
       - { file: kwinrc, group: ModifierOnlyShortcuts, key: Meta, value: "org.kde.krunner,/App,,toggleDisplay" }
       - { file: krunnerrc, group: General, key: FreeFloating, value: "true" }
       - { file: kwinrc, group: Tiling, key: padding, value: "4" }
-    # Per ansible_facts['os_family']; package names that differ from `default`
+    # ---- Install. Per ansible_facts['os_family']; `default` is for the rest ----
     gui_base_packages:
       default: [stow, flatpak, xclip, xsel, wl-clipboard]
     # Fedora ships the dark Papirus variant as its own package
@@ -83,28 +83,61 @@
     # Package names that differ from Arch's, per os_family
     kde_package_renames:
       RedHat: { kdeconnect: kde-connect, elisa: elisa-player }
-    # Fedora's group is an environment: it pulls the kde-apps, kde-media and kde-education
-    # groups too (games, a CD burner, schoolbooks). Kept out of the install and removed
-    # if a previous run or the installer already brought them. Arch's plasma-meta has none
+
+    # ---- Remove. Not wanted from the distro, whoever brought them: Fedora's
+    # @kde-desktop-environment pulls kde-apps, kde-media and kde-education too. Kept out
+    # of the group install (dnf exclude) and removed if already there; a package that
+    # is not installed is a no-op. Distro package names; the reason goes in a comment ----
     kde_unwanted_apps:
-      RedHat:
-        - kmines            # games from kde-apps
-        - kpat
-        - kmahjongg
-        - k3b               # kde-media: CD/DVD burner
-        - digikam           # kde-media: photo manager, pulls a huge dependency tree
-        - dragon            # kde-media: video player, haruna does the job
-        - kamera            # kde-media: camera import
-        - kmouth            # kde-apps: speech synthesizer front-end
-        - krusader          # kde-apps: second file manager next to dolphin
-        - kwalletmanager5   # Qt5 build in kde-desktop; the Qt6 kwalletmanager is in kde_distro_apps
-    kde_unwanted_packages: "{{ kde_unwanted_apps[ansible_facts['os_family']] | default([]) }}"
+      # Games (kde-apps)
+      - kmines
+      - kpat
+      - kmahjongg
+      # The whole kde-education group
+      - blinken
+      - cantor
+      - kalgebra
+      - kalzium
+      - kanagram
+      - kbruch
+      - kgeography
+      - khangman
+      - kig
+      - kiten
+      - klettres
+      - kmplot
+      - kstars
+      - ktouch
+      - kturtle
+      - kwordquiz
+      - marble
+      - parley
+      - rocs
+      - step
+      # Not used
+      - neochat
+      - qrca
+      - skanpage
+      - kmouth          # speech synthesizer front-end
+      - kamera          # camera import
+      - k3b             # CD/DVD burner
+      - digikam         # photo manager, pulls a huge dependency tree
+      # Better ones elsewhere
+      - dragon          # haruna (flatpak) does the job
+      - krusader        # dolphin is enough
+      - krdp            # remmina is the RDP client
+      - krfb            # no remote desktop server
+      - kwalletmanager5 # Qt5 build in kde-desktop; the Qt6 kwalletmanager is in kde_distro_apps
+
+    # ---- Derived, nothing to edit ----
     kde_package_list: "{{ kde_distro_apps + kde_flatpak_apps | map(attribute='pkg') | list }}"
     kde_package_names: >-
       {{ dict(kde_package_list | zip(kde_package_list))
          | combine(kde_package_renames[ansible_facts['os_family']] | default({})) }}
     kde_distro_packages: "{{ kde_distro_apps | map('extract', kde_package_names) | list }}"
     kde_replaced_packages: "{{ kde_flatpak_apps | map(attribute='pkg') | map('extract', kde_package_names) | list }}"
+    # Everything removed from the distro side: replaced by a flatpak or unwanted
+    kde_removed_packages: "{{ kde_replaced_packages + kde_unwanted_apps }}"
   tasks:
     - name: (debug) Show OS Family
       ansible.builtin.debug:
@@ -135,7 +168,7 @@
       become: true
       ansible.builtin.dnf:
         name: "{{ kde_desktop['RedHat'] }}"
-        exclude: "{{ ['kwrite'] + kde_replaced_packages + kde_unwanted_packages }}"
+        exclude: "{{ ['kwrite'] + kde_removed_packages }}"
         state: present
         update_cache: true
 
@@ -161,20 +194,20 @@
     # Two copies of the same app would fight over the .desktop entry and MIME
     # defaults. On Arch it fails if a meta package (kde-applications-meta)
     # still requires one of them: remove the meta package first
-    - name: Remove distro versions of the flatpak apps and unwanted group apps (Fedora)
+    - name: Remove unwanted apps and distro versions of the flatpak apps (Fedora)
       when: ansible_facts['os_family'] == 'RedHat'
       become: true
       ansible.builtin.dnf:
-        name: "{{ kde_replaced_packages + kde_unwanted_packages }}"
+        name: "{{ kde_removed_packages }}"
         state: absent
         autoremove: true
 
 
-    - name: Remove distro versions of the flatpak apps
+    - name: Remove unwanted apps and distro versions of the flatpak apps
       become: true
       when: ansible_facts['os_family'] != 'RedHat'
       ansible.builtin.package:
-        name: "{{ kde_replaced_packages }}"
+        name: "{{ kde_removed_packages }}"
         state: absent
 
 
