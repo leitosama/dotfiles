@@ -77,7 +77,7 @@ var layout = {
                 {
                     "config": {
                         "/General": {
-                            "launchers": "applications:org.kde.konsole.desktop,preferred://browser,applications:org.kde.dolphin.desktop,applications:md.obsidian.Obsidian.desktop",
+                            "launchers": "applications:org.kde.konsole.desktop,preferred://browser,applications:org.kde.dolphin.desktop",
                             "unhideOnAttention": "false"
                         }
                     },
