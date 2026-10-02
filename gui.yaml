@@ -1,0 +1,310 @@
+- name: GUI Install (KDE Plasma on Linux)
+  hosts: all
+  vars:
+    # Same clone as cli.yaml (ADR-0002)
+    dotfiles_repo: https://github.com/leitosama/dotfiles.git
+    dotfiles_version: main
+    dotfiles_dir: "{{ ansible_facts['env']['HOME'] }}/.dotfiles"
+    # Files KDE only writes on explicit edits (color schemes, konsole profiles): linked
+    # like the CLI configs. Settings are keys below, not files (ADR-0007)
+    stow_packages:
+      - kde
+    # Global Theme: theme defaults + panel layout script, linked as one directory
+    kde_lookandfeel: leito
+    kde_lookandfeel_dir: "{{ ansible_facts['env']['HOME'] }}/.local/share/plasma/look-and-feel/{{ kde_lookandfeel }}"
+    # Keys written with kwriteconfig6 on every run, only where the value differs; the
+    # theme part matches lookandfeel/leito/contents/defaults. Colors themselves are
+    # applied by Plasma at login from the ColorScheme file (it compares the file hash)
+    kde_settings:
+      - { file: kdeglobals, group: KDE, key: LookAndFeelPackage, value: "{{ kde_lookandfeel }}" }
+      - { file: kdeglobals, group: KDE, key: widgetStyle, value: Breeze }
+      - { file: kdeglobals, group: General, key: ColorScheme, value: OneDarkProNightFlat }
+      - { file: kdeglobals, group: Icons, key: Theme, value: Papirus-Dark }
+      - { file: plasmarc, group: Theme, key: name, value: default }
+      - { file: kwinrc, group: org.kde.kdecoration2, key: library, value: org.kde.breeze }
+      - { file: kwinrc, group: org.kde.kdecoration2, key: theme, value: Breeze }
+      # Behaviour
+      - { file: kwinrc, group: NightColor, key: Active, value: "true" }
+      - { file: kwinrc, group: NightColor, key: Mode, value: Times }
+      - { file: kwinrc, group: NightColor, key: MorningBeginFixed, value: "0930" }
+      - { file: kwinrc, group: NightColor, key: DayTemperature, value: "5100" }
+      - { file: kwinrc, group: NightColor, key: NightTemperature, value: "3800" }
+      - { file: kwinrc, group: ModifierOnlyShortcuts, key: Meta, value: "org.kde.krunner,/App,,toggleDisplay" }
+      - { file: krunnerrc, group: General, key: FreeFloating, value: "true" }
+      - { file: kwinrc, group: Tiling, key: padding, value: "4" }
+    # Per ansible_facts['os_family']; package names that differ from `default`
+    gui_base_packages:
+      default: [stow, flatpak, xclip, xsel, wl-clipboard]
+    # Fedora ships the dark Papirus variant as its own package
+    kde_theme_packages:
+      default: [papirus-icon-theme]
+      RedHat: [papirus-icon-theme, papirus-icon-theme-dark]
+    # Plasma itself and the apps tied to the session; another distro needs a line
+    # here (Fedora's group already includes the basic apps: konsole, dolphin...)
+    kde_desktop:
+      RedHat: ["@kde-desktop-environment"]
+      Archlinux: [plasma-meta, konsole, dolphin, ark]
+    # Apps from the distro: they talk to the session or the host, the sandbox
+    # breaks them (ADR-0006). Arch package names, see kde_package_renames
+    kde_distro_apps:
+      - spectacle       # uses KWin's restricted screenshot D-Bus API, not on Flathub
+      - kdeconnect      # a session daemon with the phone, not on Flathub
+      - ksystemlog      # reads the host journal, not on Flathub
+      - kwalletmanager  # D-Bus client of kwalletd from the same Plasma
+      - kleopatra       # the flatpak bundles its own gnupg against the host ~/.gnupg
+      - filelight       # the flatpak has no filesystem access, can't scan the disk
+      # PIM runs on Akonadi (a session service) and the host gpg-agent
+      - kontact
+      - kmail
+      - korganizer
+      - kaddressbook
+      - merkuro
+    # Apps from Flathub, user install: their version doesn't follow the
+    # distro's Qt/KF upgrades and can be pinned or rolled back (ADR-0006).
+    # `pkg` is the distro package (Arch name) removed in their favour
+    kde_flatpak_apps:
+      - { pkg: okular, flatpak: org.kde.okular }
+      - { pkg: gwenview, flatpak: org.kde.gwenview }
+      - { pkg: kolourpaint, flatpak: org.kde.kolourpaint }
+      - { pkg: kamoso, flatpak: org.kde.kamoso }
+      - { pkg: haruna, flatpak: org.kde.haruna }
+      - { pkg: elisa, flatpak: org.kde.elisa }
+      - { pkg: krdc, flatpak: org.kde.krdc }
+      - { pkg: ktorrent, flatpak: org.kde.ktorrent }
+      # A notepad here; as an IDE (LSP, git, terminal) it would need the distro one
+      - { pkg: kate, flatpak: org.kde.kate }
+      - { pkg: kdiff3, flatpak: org.kde.kdiff3 }
+      - { pkg: okteta, flatpak: org.kde.okteta }
+      - { pkg: kcalc, flatpak: org.kde.kcalc }
+      - { pkg: kcharselect, flatpak: org.kde.kcharselect }
+      - { pkg: kcolorchooser, flatpak: org.kde.kcolorchooser }
+      # Standalone feeds: Kontact (distro) won't show its Akregator tab
+      - { pkg: akregator, flatpak: org.kde.akregator }
+    # Package names that differ from Arch's, per os_family
+    kde_package_renames:
+      RedHat: { kdeconnect: kde-connect, elisa: elisa-player }
+    kde_package_list: "{{ kde_distro_apps + kde_flatpak_apps | map(attribute='pkg') | list }}"
+    kde_package_names: >-
+      {{ dict(kde_package_list | zip(kde_package_list))
+         | combine(kde_package_renames[ansible_facts['os_family']] | default({})) }}
+    kde_distro_packages: "{{ kde_distro_apps | map('extract', kde_package_names) | list }}"
+    kde_replaced_packages: "{{ kde_flatpak_apps | map(attribute='pkg') | map('extract', kde_package_names) | list }}"
+  tasks:
+    - name: (debug) Show OS Family
+      ansible.builtin.debug:
+        msg: "OS Family is {{ ansible_facts['os_family'] }}, package manager - {{ ansible_facts['pkg_mgr'] }}"
+
+    # Fails before anything is installed, so an unknown distro is a one-line fix
+    # in kde_desktop rather than a half-set-up desktop
+    - name: Check the distro is supported
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['system'] == 'Linux'
+          - ansible_facts['os_family'] in kde_desktop
+        fail_msg: >-
+          No KDE packages for {{ ansible_facts['system'] }}/{{ ansible_facts['os_family'] }};
+          add a '{{ ansible_facts['os_family'] }}' entry to kde_desktop in gui.yaml
+        quiet: true
+
+    - name: Install X11/Wayland packages for clipboard, stow and flatpak
+      become: true
+      ansible.builtin.package:
+        name: "{{ gui_base_packages[ansible_facts['os_family']] | default(gui_base_packages['default']) }}"
+        state: present
+
+    # Excluding the flatpak apps keeps the group from bringing back the distro
+    # packages removed below
+    - name: Install KDE (Fedora group)
+      when: ansible_facts['os_family'] == 'RedHat'
+      become: true
+      ansible.builtin.dnf:
+        name: "{{ kde_desktop['RedHat'] }}"
+        exclude: "{{ ['kwrite'] + kde_replaced_packages }}"
+        state: present
+        update_cache: true
+
+    - name: Install KDE
+      when: ansible_facts['os_family'] != 'RedHat'
+      become: true
+      ansible.builtin.package:
+        name: "{{ kde_desktop[ansible_facts['os_family']] }}"
+        state: present
+
+    - name: Install KDE apps from the distro
+      become: true
+      ansible.builtin.package:
+        name: "{{ kde_distro_packages }}"
+        state: present
+
+    - name: Install icon theme
+      become: true
+      ansible.builtin.package:
+        name: "{{ kde_theme_packages[ansible_facts['os_family']] | default(kde_theme_packages['default']) }}"
+        state: present
+
+    # Two copies of the same app would fight over the .desktop entry and MIME
+    # defaults. On Arch it fails if a meta package (kde-applications-meta)
+    # still requires one of them: remove the meta package first
+    - name: Remove distro versions of the flatpak apps (Fedora)
+      when: ansible_facts['os_family'] == 'RedHat'
+      become: true
+      ansible.builtin.dnf:
+        name: "{{ kde_replaced_packages }}"
+        state: absent
+        autoremove: true
+
+
+    - name: Remove distro versions of the flatpak apps
+      become: true
+      when: ansible_facts['os_family'] != 'RedHat'
+      ansible.builtin.package:
+        name: "{{ kde_replaced_packages }}"
+        state: absent
+
+
+    # A user installation sees only user remotes, the system flathub (if any)
+    # doesn't count
+    - name: Add Flathub for the user
+      community.general.flatpak_remote:
+        name: flathub
+        flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
+        method: user
+        state: present
+
+    - name: Install flatpak apps
+      community.general.flatpak:
+        name: "{{ kde_flatpak_apps | map(attribute='flatpak') | list }}"
+        remote: flathub
+        method: user
+        state: present
+
+    # Was installed by earlier runs; replaced by the distro kwalletmanager
+    - name: Remove retired flatpak apps
+      community.general.flatpak:
+        name:
+          - org.kde.kwalletmanager5
+          - org.kde.kleopatra
+          - org.kde.filelight
+        method: user
+        state: absent
+
+    - name: Clone or update dotfiles
+      ansible.builtin.import_tasks: tasks/dotfiles_clone.yaml
+
+    # A clone left on the old `dev` branch is never switched automatically
+    # (ADR-0002), and it has no Global Theme to link
+    - name: Check the Global Theme in the clone
+      ansible.builtin.stat:
+        path: "{{ dotfiles_dir }}/lookandfeel/{{ kde_lookandfeel }}/metadata.json"
+      register: lookandfeel_repo
+
+    - name: Refuse to run without the Global Theme
+      ansible.builtin.fail:
+        msg: >-
+          {{ dotfiles_dir }}/lookandfeel is missing; switch the clone to {{ dotfiles_version }}
+          (commit or stash local changes first) and run again
+      when: not lookandfeel_repo.stat.exists
+
+    # The old gui.yaml linked ~/.config/<file> into gui_config/ in the clone.
+    # Drop those links (they would block stow and kwriteconfig6 writes through
+    # them); nothing is lost, the settings that matter are kde_settings now
+    - name: Remove links left by the old gui_config layout
+      ansible.builtin.shell: |
+        for link in "$HOME"/.config/* "$HOME"/.config/.[!.]* "$HOME"/.local/share/*; do
+          [ -L "$link" ] || continue
+          case "$(readlink "$link")" in
+            "$DOTFILES"/gui_config/*) ;;
+            "~/.dotfiles/gui_config/"*) ;;
+            *) continue ;;
+          esac
+          rm "$link" && echo "REMOVED: $link"
+        done
+      environment:
+        DOTFILES: "{{ dotfiles_dir }}"
+      register: old_links
+      changed_when: "'REMOVED' in old_links.stdout"
+
+    - name: Link configs from the repo
+      ansible.builtin.import_tasks: tasks/stow.yaml
+
+    # The whole package directory is linked, unlike stow --no-folding: KPackage
+    # ignores files whose real path is outside the package directory, which is
+    # what per-file links into the clone would be
+    - name: Check the Global Theme directory
+      ansible.builtin.stat:
+        path: "{{ kde_lookandfeel_dir }}"
+      register: lookandfeel_dir
+
+    - name: Refuse to replace a real Global Theme directory
+      ansible.builtin.fail:
+        msg: >-
+          {{ kde_lookandfeel_dir }} exists and is not a link to
+          {{ dotfiles_dir }}/lookandfeel/{{ kde_lookandfeel }}; move it away and run again
+      when:
+        - lookandfeel_dir.stat.exists
+        - not (lookandfeel_dir.stat.islnk and
+               lookandfeel_dir.stat.lnk_target == dotfiles_dir + '/lookandfeel/' + kde_lookandfeel)
+
+    - name: Create the Global Themes directory
+      ansible.builtin.file:
+        path: "{{ kde_lookandfeel_dir | dirname }}"
+        state: directory
+        mode: '0755'
+
+    - name: Link the Global Theme to the repo
+      ansible.builtin.file:
+        src: "{{ dotfiles_dir }}/lookandfeel/{{ kde_lookandfeel }}"
+        dest: "{{ kde_lookandfeel_dir }}"
+        state: link
+
+    # Read first, so a rerun changes nothing and reports nothing
+    - name: Read KDE settings
+      ansible.builtin.command:
+        argv: [kreadconfig6, --file, "{{ item.file }}", --group, "{{ item.group }}", --key, "{{ item.key }}"]
+      loop: "{{ kde_settings }}"
+      loop_control:
+        label: "{{ item.file }} [{{ item.group }}] {{ item.key }}"
+      register: kde_settings_current
+      changed_when: false
+
+    - name: Write KDE settings
+      ansible.builtin.command:
+        argv: [kwriteconfig6, --file, "{{ item.item.file }}", --group, "{{ item.item.group }}", --key, "{{ item.item.key }}", "{{ item.item.value }}"]
+      loop: "{{ kde_settings_current.results }}"
+      loop_control:
+        label: "{{ item.item.file }} [{{ item.item.group }}] {{ item.item.key }}={{ item.item.value }}"
+      when: item.stdout != item.item.value | string
+      changed_when: true
+      notify: Remind to log in again
+
+    # kde-gtk-config syncs icons, colors and the dark preference at login, but
+    # keeps whatever GTK theme name is set; only Breeze GTK reads Plasma's colors
+    - name: Use Breeze for GTK apps
+      community.general.ini_file:
+        path: "{{ ansible_facts['env']['HOME'] }}/.config/{{ item }}/settings.ini"
+        section: Settings
+        option: gtk-theme-name
+        value: Breeze
+        no_extra_spaces: true
+        mode: '0644'
+      loop: [gtk-3.0, gtk-4.0]
+
+    # Flatpak GTK apps only see the colors kde-gtk-config writes there with read access
+    - name: Check global flatpak overrides
+      ansible.builtin.command:
+        argv: [flatpak, override, --user, --show]
+      register: flatpak_overrides
+      changed_when: false
+
+    - name: Let flatpak apps read the GTK settings
+      ansible.builtin.command:
+        argv: [flatpak, override, --user, --filesystem=xdg-config/gtk-3.0:ro, --filesystem=xdg-config/gtk-4.0:ro]
+      when: >-
+        'xdg-config/gtk-3.0:ro' not in flatpak_overrides.stdout or
+        'xdg-config/gtk-4.0:ro' not in flatpak_overrides.stdout
+      changed_when: true
+
+  handlers:
+    - name: Remind to log in again
+      ansible.builtin.debug:
+        msg: KDE settings changed, log out and back in for Plasma to apply them

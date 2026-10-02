@@ -1,0 +1,24 @@
+---
+# Shared by cli.yaml and gui.yaml. Needs dotfiles_dir and stow_packages.
+# --no-folding: stow links files, never whole directories, so machine-local
+# files next to them never land in the clone (ADR-0002).
+
+- name: Link configs from the repo
+  ansible.builtin.command:
+    argv:
+      - stow
+      - --dir={{ dotfiles_dir }}/stow
+      - --target={{ ansible_facts['env']['HOME'] }}
+      - --no-folding
+      - --restow
+      - --verbose=1
+      - "{{ item }}"
+  loop: "{{ stow_packages }}"
+  register: stow
+  # --restow unlinks and relinks everything, marking the no-op pairs as
+  # "reverts previous action"
+  changed_when: >-
+    (stow.stderr_lines | select('match', '^(LINK|MKDIR):')
+      | reject('search', 'reverts previous action') | list | length > 0)
+    or (stow.stderr_lines | select('match', '^(UNLINK|RMDIR):') | list | length)
+      > (stow.stderr_lines | select('search', 'reverts previous action') | list | length)

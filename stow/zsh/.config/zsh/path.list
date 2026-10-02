@@ -1,0 +1,5 @@
+# Public PATH entries, see path.zsh. Private ones go to ~/.config/zsh/path.local.list
+~/.local/bin
+~/go/bin
+~/.pdtm/go/bin
+~/yandex-cloud/bin

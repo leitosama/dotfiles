@@ -1,0 +1,112 @@
+- name: Dotfiles
+  hosts: all
+  vars:
+    dotfiles_repo: https://github.com/leitosama/dotfiles.git
+    dotfiles_version: main
+    # The only copy of the configs on the host: stow links point here, and
+    # path-add / comp-add edit the files in this clone
+    dotfiles_dir: "{{ ansible_facts['env']['HOME'] }}/.dotfiles"
+    stow_packages:
+      - zsh
+      - starship
+  tasks:
+    - name: Install zsh
+      become: "{{ 'false' if ansible_facts['os_family'] == 'Darwin' else 'true' }}"
+      ansible.builtin.package:
+        name:
+          # - ttf-hack-nerd
+          - zsh
+          - git
+          - vim
+          - stow
+    - name: Create .config folder
+      ansible.builtin.file:
+        state: directory
+        mode: '0770'
+        path: "{{ ansible_facts['env']['HOME'] }}/.config"
+
+    - name: Clone or update dotfiles
+      ansible.builtin.import_tasks: tasks/dotfiles_clone.yaml
+
+    - name: Fetch starship
+      ansible.builtin.uri:
+        url: https://starship.rs/install.sh
+        return_content: true
+      register: starship_installer
+
+    - name: Run starship installer
+      become: true
+      ansible.builtin.command:
+        cmd: "sh -s -- -y"
+        stdin: "{{ starship_installer.content }}"
+        creates: /usr/local/bin/starship
+
+    - name: Get the username running the deploy
+      become: false
+      changed_when: false
+      ansible.builtin.command: whoami
+      register: whoami
+
+    # Not fatal: on some hosts the account can't be changed (e.g. directory
+    # users missing from /etc/passwd), the rest of the setup still applies
+    - name: Change default shell
+      become: true
+      ignore_errors: true  # noqa: ignore-errors
+      ansible.builtin.user:
+        name: "{{ whoami.stdout }}"
+        shell: "/bin/zsh"
+        state: present
+
+    - name: Fetch Zi
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/z-shell/src/refs/heads/main/public/sh/install.sh
+        return_content: true
+      register: zi_installer
+
+    # The installer has no -y flag (it aborts on unknown options) and now
+    # defaults to ~/.local/share/zi, so pin ZI_HOME to the path .zshrc sources.
+    # -i skip: .zshrc is managed by this playbook, don't let the installer edit it.
+    - name: Install Zi
+      ansible.builtin.command:
+        cmd: "sh -s -- -i skip"
+        stdin: "{{ zi_installer.content }}"
+        creates: "{{ ansible_facts['env']['HOME'] }}/.zi/bin/zi.zsh"
+      environment:
+        ZI_HOME: "{{ ansible_facts['env']['HOME'] }}/.zi"
+
+    # Stow must link the files inside, never the whole directory (--no-folding
+    # below), or machine-local files like path.local.list end up in the clone
+    - name: Create zsh config directory
+      ansible.builtin.file:
+        path: "{{ ansible_facts['env']['HOME'] }}/.config/zsh"
+        state: directory
+        mode: '0700'
+
+    - name: Link configs from the repo
+      ansible.builtin.import_tasks: tasks/stow.yaml
+
+    # An old-style ~/.zshrc symlink into the repo would make the stub below
+    # get written into the clone
+    - name: Check ~/.zshrc
+      ansible.builtin.stat:
+        path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
+      register: zshrc
+
+    - name: Refuse to replace a ~/.zshrc symlink
+      ansible.builtin.fail:
+        msg: >-
+          ~/.zshrc is a symlink to {{ zshrc.stat.lnk_source }}; remove it
+          (keep a copy if it has local changes) and run again
+      when: zshrc.stat.islnk | default(false)
+
+    # Written once and then left alone: whatever installers append here stays
+    # machine-local, move what you want to keep into the repo zshrc by hand
+    - name: Create ~/.zshrc stub
+      ansible.builtin.copy:
+        dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
+        force: false
+        mode: '0600'
+        content: |
+          # The config lives in the dotfiles repo: ~/.config/zsh/zshrc.
+          # Lines added below (by installers or by hand) stay local to this machine.
+          source "$HOME/.config/zsh/zshrc"

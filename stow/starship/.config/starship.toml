@@ -1,0 +1,66 @@
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$cmd_duration\
+$time\
+$line_break\
+$character"""
+
+[hostname]
+disabled = false
+ssh_only = true
+
+[directory]
+style = "bright-blue"
+truncation_length = 3
+truncation_symbol = ".../"
+read_only = "  !ro"
+
+[directory.substitutions]
+"Downloads"="↓"
+"Pictures"="🖼"
+"Documents"="📄"
+"Загрузки"="↓"
+"Изображения"="🖼 "
+"Документы"="📄"
+
+[character]
+success_symbol = "[❯](white)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"
+
+[git_branch]
+format = "[$branch]($style)"
+style = "bright-cyan"
+
+[git_status]
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+style = "cyan"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-cyan"
+
+[time]
+disabled = false
+format = "[ at ](bright-white dimmed)[$time]($style)"
+time_format = "%H:%M:%S"
+utc_time_offset = "+7"
+style = "bright-black"
+
+[cmd_duration]
+min_time = 5000
+format = "[$duration]($style) "
+style = "yellow"
+

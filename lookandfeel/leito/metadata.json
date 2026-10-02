@@ -1,0 +1,15 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "leitosama"
+            }
+        ],
+        "Description": "One Dark Pro Night Flat on Breeze, Papirus-Dark icons and the leito panels",
+        "Id": "leito",
+        "License": "MIT",
+        "Name": "leito",
+        "Website": "https://github.com/leitosama/dotfiles"
+    }
+}

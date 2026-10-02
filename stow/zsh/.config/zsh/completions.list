@@ -1,0 +1,7 @@
+# Tools whose zsh completion is generated automatically, see completions.zsh.
+#   <cmd>                  -> `<cmd> completion zsh`
+#   <cmd> <generator...>   -> custom command printing the completion script
+#   <cmd> @complete-c      -> binary completes itself (instead of `-install-autocomplete`)
+oc
+yc
+terraform @complete-c

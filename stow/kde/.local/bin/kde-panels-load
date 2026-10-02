@@ -1,0 +1,57 @@
+#!/usr/bin/env python3
+"""Replace the current Plasma panels with the ones in the leito Global Theme (ADR-0007).
+
+Runs the theme's layout script in the live plasmashell (evaluateScript over D-Bus) after
+removing the existing panels. Theme, desktops and wallpapers are left alone, unlike
+`plasma-apply-lookandfeel --resetLayout`, which also resets the desktops.
+"""
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+
+# ~/.local/bin/kde-panels-load -> <clone>/stow/kde/.local/bin/kde-panels-load
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.realpath(__file__))))))
+LAYOUT = os.path.join(REPO, "lookandfeel", "leito", "contents", "layouts",
+                      "org.kde.plasma.desktop-layout.js")
+REMOVE_PANELS = "panels().forEach(function (panel) { panel.remove(); });\n"
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("-y", "--yes", action="store_true", help="don't ask for confirmation")
+    args = parser.parse_args()
+
+    if not args.yes:
+        answer = input("The current panels will be replaced (save them first with "
+                       "kde-panels-save if needed). Continue? [y/N] ")
+        if answer.strip().lower() not in ("y", "yes"):
+            sys.exit(1)
+
+    with open(LAYOUT, encoding="utf-8") as f:
+        script = REMOVE_PANELS + f.read()
+    result = subprocess.run(["busctl", "--user", "--json=short", "call", "org.kde.plasmashell",
+                             "/PlasmaShell", "org.kde.PlasmaShell", "evaluateScript", "s", script],
+                            capture_output=True, text=True)
+    if result.returncode != 0:
+        # e.g. "Widgets are locked", or an error in the layout script
+        sys.exit(f"kde-panels-load: plasmashell refused the layout: {result.stderr.strip()}")
+    out = result.stdout
+    # The layout script print()s every widget it had to skip on this machine
+    output = json.loads(out)["data"][0]
+    missing = re.findall(r"widget (\S+) is not installed", output)
+    if missing:
+        print("Panels loaded without these widgets, they are not installed here:")
+        for plugin in missing:
+            print(f"  {plugin}")
+        print("Install them (Add Widgets → Get New Widgets, or the distro package), "
+              "then run kde-panels-load again.")
+        sys.exit(2)
+    print("Panels loaded.")
+
+
+if __name__ == "__main__":
+    main()

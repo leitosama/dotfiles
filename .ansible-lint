@@ -1,0 +1,12 @@
+---
+# Same config locally and in CI (.github/workflows/lint.yml)
+profile: production
+# Warnings fail the run too: nothing is left to pile up as noise
+strict: true
+warn_list: []
+
+exclude_paths:
+  - .github/
+  - docs/
+  - lookandfeel/
+  - stow/

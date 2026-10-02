@@ -1,0 +1,106 @@
+#!/usr/bin/env python3
+"""Save the current Plasma panels into the leito Global Theme (ADR-0007).
+
+Asks plasmashell for its layout (dumpCurrentLayoutJS over D-Bus, the same call Plasma's
+Look and Feel Explorer uses), drops desktops and machine-local keys, and writes the result
+between the SAVED LAYOUT markers of the layout script in the clone. Then shows the diff;
+with --push it also commits and pushes it.
+"""
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+
+# ~/.local/bin/kde-panels-save -> <clone>/stow/kde/.local/bin/kde-panels-save
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.realpath(__file__))))))
+LAYOUT = os.path.join(REPO, "lookandfeel", "leito", "contents", "layouts",
+                      "org.kde.plasma.desktop-layout.js")
+END = "// END SAVED LAYOUT"
+
+# Runtime state and per-machine values: sizes of popups and dialogs, usage stats,
+# cached copies of launchers under $HOME
+DROP_KEYS = {"localPath", "PreloadWeight", "popupHeight", "popupWidth",
+             "DialogHeight", "DialogWidth"}
+DROP_GROUPS = {"/ConfigDialog"}
+
+
+def dump_layout():
+    out = subprocess.run(
+        ["busctl", "--user", "--json=short", "call", "org.kde.plasmashell", "/PlasmaShell",
+         "org.kde.PlasmaShell", "dumpCurrentLayoutJS"],
+        check=True, capture_output=True, text=True).stdout
+    script = bytes(json.loads(out)["data"][0]).decode()
+    match = re.search(r"var layout = (\{.*\});\s*plasma\.loadSerializedLayout", script, re.S)
+    if not match:
+        sys.exit("kde-panels-save: unexpected dumpCurrentLayoutJS output")
+    return json.loads(match.group(1))
+
+
+def clean_config(config, where):
+    clean = {}
+    for group, entries in config.items():
+        if group in DROP_GROUPS:
+            continue
+        kept = {}
+        for key, value in entries.items():
+            if key in DROP_KEYS:
+                continue
+            # A path in $HOME is machine data; never let it into the repo
+            if isinstance(value, str) and ("/home/" in value or "file:///root" in value):
+                print(f"kde-panels-save: dropped {where} {group} {key} (path in $HOME)",
+                      file=sys.stderr)
+                continue
+            kept[key] = value
+        if kept:
+            clean[group] = kept
+    return clean
+
+
+def clean_layout(layout):
+    layout["desktops"] = []
+    for panel in layout["panels"]:
+        panel["config"] = clean_config(panel.get("config", {}), "panel")
+        for applet in panel["applets"]:
+            applet["config"] = clean_config(applet.get("config", {}), applet["plugin"])
+    return layout
+
+
+def write_layout(layout):
+    with open(LAYOUT, encoding="utf-8") as f:
+        script = f.read()
+    body = "var layout = " + json.dumps(layout, indent=4, sort_keys=True, ensure_ascii=False) + ";\n"
+    # Everything from `var layout =` up to the END marker; the comments around it stay
+    pattern = re.compile(r"^var layout = .*?(?=^" + re.escape(END) + ")", re.S | re.M)
+    if not pattern.search(script):
+        sys.exit(f"kde-panels-save: no `var layout` before {END!r} in {LAYOUT}")
+    with open(LAYOUT, "w", encoding="utf-8") as f:
+        f.write(pattern.sub(lambda _: body, script, count=1))
+
+
+def git(*args, check=True):
+    return subprocess.run(["git", "-C", REPO, *args], check=check)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    parser.add_argument("--push", action="store_true", help="commit and push the change")
+    args = parser.parse_args()
+
+    write_layout(clean_layout(dump_layout()))
+    rel = os.path.relpath(LAYOUT, REPO)
+    if git("diff", "--quiet", "--", rel, check=False).returncode == 0:
+        print("kde-panels-save: panels are the same as in the repo")
+        return
+    git("--no-pager", "diff", "--stat", "--", rel)
+    if args.push:
+        git("commit", "-m", "[gui] Save panel layout", "--", rel)
+        git("push")
+    else:
+        print(f"Review: git -C {REPO} diff -- {rel}\nThen commit and push, or run with --push.")
+
+
+if __name__ == "__main__":
+    main()

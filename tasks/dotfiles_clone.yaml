@@ -1,0 +1,39 @@
+---
+# Shared by cli.yaml and gui.yaml: both use the same ~/.dotfiles clone (ADR-0002).
+# Needs dotfiles_repo, dotfiles_version, dotfiles_dir.
+
+# Only clones when missing; an existing clone is updated below, never reset
+- name: Clone dotfiles
+  ansible.builtin.git:
+    repo: "{{ dotfiles_repo }}"
+    dest: "{{ dotfiles_dir }}"
+    version: "{{ dotfiles_version }}"
+    update: false
+
+# Fast-forward only, and only a clean clone on the expected branch: local
+# edits and unpushed commits are left for you to merge with git
+- name: Update dotfiles
+  ansible.builtin.shell: |
+    if [ -n "$(git status --porcelain)" ]; then
+      echo "SKIP: uncommitted changes"; exit 0
+    fi
+    branch=$(git symbolic-ref --short -q HEAD)
+    if [ "$branch" != "$VERSION" ]; then
+      echo "SKIP: on '${branch:-detached HEAD}', not '$VERSION'"; exit 0
+    fi
+    before=$(git rev-parse HEAD)
+    if ! git pull --ff-only --quiet; then
+      echo "SKIP: cannot fast-forward to origin/$VERSION"; exit 0
+    fi
+    [ "$(git rev-parse HEAD)" = "$before" ] || echo UPDATED
+  args:
+    chdir: "{{ dotfiles_dir }}"
+  environment:
+    VERSION: "{{ dotfiles_version }}"
+  register: dotfiles_update
+  changed_when: "'UPDATED' in dotfiles_update.stdout"
+
+- name: Report skipped dotfiles update
+  ansible.builtin.debug:
+    msg: "{{ dotfiles_dir }} not updated, {{ dotfiles_update.stdout }}"
+  when: "'SKIP' in dotfiles_update.stdout"

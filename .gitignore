@@ -1,0 +1,4 @@
+.vscode
+inventory.ini
+.ansible
+bookmarks.xml*

@@ -1,0 +1,25 @@
+# Applied as defaults when the Global Theme is picked or at login after LookAndFeelPackage
+# changes; gui.yaml writes the same keys (kde_settings) so every machine ends up with them.
+# Splash, lock screen and logout come from Breeze (KPackage falls back to it).
+
+[kdeglobals][KDE]
+widgetStyle=Breeze
+
+[kdeglobals][General]
+ColorScheme=OneDarkProNightFlat
+
+[kdeglobals][Icons]
+Theme=Papirus-Dark
+
+[plasmarc][Theme]
+name=default
+
+[kcminputrc][Mouse]
+cursorTheme=breeze_cursors
+
+[kwinrc][org.kde.kdecoration2]
+library=org.kde.breeze
+theme=Breeze
+
+[ksplashrc][KSplash]
+Theme=org.kde.breeze.desktop
