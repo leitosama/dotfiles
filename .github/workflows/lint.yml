@@ -13,7 +13,7 @@ jobs:
       # are not injected, so playbooks must use ansible_facts[...]
       ANSIBLE_INJECT_FACTS_AS_VARS: "false"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-python@v7
         with:
