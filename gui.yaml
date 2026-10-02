@@ -83,6 +83,22 @@
     # Package names that differ from Arch's, per os_family
     kde_package_renames:
       RedHat: { kdeconnect: kde-connect, elisa: elisa-player }
+    # Fedora's group is an environment: it pulls the kde-apps, kde-media and kde-education
+    # groups too (games, a CD burner, schoolbooks). Kept out of the install and removed
+    # if a previous run or the installer already brought them. Arch's plasma-meta has none
+    kde_unwanted_apps:
+      RedHat:
+        - kmines            # games from kde-apps
+        - kpat
+        - kmahjongg
+        - k3b               # kde-media: CD/DVD burner
+        - digikam           # kde-media: photo manager, pulls a huge dependency tree
+        - dragon            # kde-media: video player, haruna does the job
+        - kamera            # kde-media: camera import
+        - kmouth            # kde-apps: speech synthesizer front-end
+        - krusader          # kde-apps: second file manager next to dolphin
+        - kwalletmanager5   # Qt5 build in kde-desktop; the Qt6 kwalletmanager is in kde_distro_apps
+    kde_unwanted_packages: "{{ kde_unwanted_apps[ansible_facts['os_family']] | default([]) }}"
     kde_package_list: "{{ kde_distro_apps + kde_flatpak_apps | map(attribute='pkg') | list }}"
     kde_package_names: >-
       {{ dict(kde_package_list | zip(kde_package_list))
@@ -119,7 +135,7 @@
       become: true
       ansible.builtin.dnf:
         name: "{{ kde_desktop['RedHat'] }}"
-        exclude: "{{ ['kwrite'] + kde_replaced_packages }}"
+        exclude: "{{ ['kwrite'] + kde_replaced_packages + kde_unwanted_packages }}"
         state: present
         update_cache: true
 
@@ -145,11 +161,11 @@
     # Two copies of the same app would fight over the .desktop entry and MIME
     # defaults. On Arch it fails if a meta package (kde-applications-meta)
     # still requires one of them: remove the meta package first
-    - name: Remove distro versions of the flatpak apps (Fedora)
+    - name: Remove distro versions of the flatpak apps and unwanted group apps (Fedora)
       when: ansible_facts['os_family'] == 'RedHat'
       become: true
       ansible.builtin.dnf:
-        name: "{{ kde_replaced_packages }}"
+        name: "{{ kde_replaced_packages + kde_unwanted_packages }}"
         state: absent
         autoremove: true
 
