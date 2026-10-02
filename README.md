@@ -96,7 +96,8 @@ kde-panels-load          # replace the current panels with the saved ones (theme
 
 On load, widgets that are not installed and apps that don't exist on the machine are
 skipped. Saving drops desktops, wallpapers and machine-local keys (popup sizes, cached
-launcher copies, anything with a path in `$HOME`). A new user gets the panels at first login;
+launcher copies, anything with a path in `$HOME`) and task manager pins other than the default
+browser and `org.kde.*` apps (pin the rest by hand on each machine). A new user gets the panels at first login;
 on a machine where Plasma already made its default panels, run `kde-panels-load` once.
 
 ## Zsh PATH and completions

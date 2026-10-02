@@ -25,6 +25,10 @@ END = "// END SAVED LAYOUT"
 DROP_KEYS = {"localPath", "PreloadWeight", "popupHeight", "popupWidth",
              "DialogHeight", "DialogWidth"}
 DROP_GROUPS = {"/ConfigDialog"}
+# Task manager pins kept in the repo: the default browser and KDE apps, which every machine
+# has. Other apps (Obsidian, Telegram...) are installed per machine, so they stay pinned
+# locally and are not saved
+KEEP_LAUNCHERS = ("preferred://", "applications:org.kde.")
 
 
 def dump_layout():
@@ -33,10 +37,19 @@ def dump_layout():
          "org.kde.PlasmaShell", "dumpCurrentLayoutJS"],
         check=True, capture_output=True, text=True).stdout
     script = bytes(json.loads(out)["data"][0]).decode()
-    match = re.search(r"var layout = (\{.*\});\s*plasma\.loadSerializedLayout", script, re.S)
-    if not match:
-        sys.exit("kde-panels-save: unexpected dumpCurrentLayoutJS output")
-    return json.loads(match.group(1))
+    # Plasma 6 prints `var layout = {...}\n;`: parse the JSON object itself instead of
+    # matching what follows it
+    prefix = "var layout = "
+    start = script.find(prefix)
+    layout = None
+    if start != -1:
+        try:
+            layout, _ = json.JSONDecoder().raw_decode(script, start + len(prefix))
+        except ValueError:
+            pass
+    if not isinstance(layout, dict) or "panels" not in layout:
+        sys.exit("kde-panels-save: unexpected dumpCurrentLayoutJS output:\n" + script[:300])
+    return layout
 
 
 def clean_config(config, where):
@@ -59,12 +72,27 @@ def clean_config(config, where):
     return clean
 
 
+def clean_launchers(config, where):
+    general = config.get("/General", {})
+    if "launchers" not in general:
+        return
+    kept = []
+    for launcher in general["launchers"].split(","):
+        if launcher.startswith(KEEP_LAUNCHERS):
+            kept.append(launcher)
+        elif launcher:
+            print(f"kde-panels-save: dropped {where} launcher {launcher} (not a KDE app)",
+                  file=sys.stderr)
+    general["launchers"] = ",".join(kept)
+
+
 def clean_layout(layout):
     layout["desktops"] = []
     for panel in layout["panels"]:
         panel["config"] = clean_config(panel.get("config", {}), "panel")
         for applet in panel["applets"]:
             applet["config"] = clean_config(applet.get("config", {}), applet["plugin"])
+            clean_launchers(applet["config"], applet["plugin"])
     return layout
 
 
