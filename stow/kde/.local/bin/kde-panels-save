@@ -33,10 +33,19 @@ def dump_layout():
          "org.kde.PlasmaShell", "dumpCurrentLayoutJS"],
         check=True, capture_output=True, text=True).stdout
     script = bytes(json.loads(out)["data"][0]).decode()
-    match = re.search(r"var layout = (\{.*\});\s*plasma\.loadSerializedLayout", script, re.S)
-    if not match:
-        sys.exit("kde-panels-save: unexpected dumpCurrentLayoutJS output")
-    return json.loads(match.group(1))
+    # Plasma 6 prints `var layout = {...}\n;`: parse the JSON object itself instead of
+    # matching what follows it
+    prefix = "var layout = "
+    start = script.find(prefix)
+    layout = None
+    if start != -1:
+        try:
+            layout, _ = json.JSONDecoder().raw_decode(script, start + len(prefix))
+        except ValueError:
+            pass
+    if not isinstance(layout, dict) or "panels" not in layout:
+        sys.exit("kde-panels-save: unexpected dumpCurrentLayoutJS output:\n" + script[:300])
+    return layout
 
 
 def clean_config(config, where):
