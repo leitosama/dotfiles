@@ -25,6 +25,10 @@ END = "// END SAVED LAYOUT"
 DROP_KEYS = {"localPath", "PreloadWeight", "popupHeight", "popupWidth",
              "DialogHeight", "DialogWidth"}
 DROP_GROUPS = {"/ConfigDialog"}
+# Task manager pins kept in the repo: the default browser and KDE apps, which every machine
+# has. Other apps (Obsidian, Telegram...) are installed per machine, so they stay pinned
+# locally and are not saved
+KEEP_LAUNCHERS = ("preferred://", "applications:org.kde.")
 
 
 def dump_layout():
@@ -68,12 +72,27 @@ def clean_config(config, where):
     return clean
 
 
+def clean_launchers(config, where):
+    general = config.get("/General", {})
+    if "launchers" not in general:
+        return
+    kept = []
+    for launcher in general["launchers"].split(","):
+        if launcher.startswith(KEEP_LAUNCHERS):
+            kept.append(launcher)
+        elif launcher:
+            print(f"kde-panels-save: dropped {where} launcher {launcher} (not a KDE app)",
+                  file=sys.stderr)
+    general["launchers"] = ",".join(kept)
+
+
 def clean_layout(layout):
     layout["desktops"] = []
     for panel in layout["panels"]:
         panel["config"] = clean_config(panel.get("config", {}), "panel")
         for applet in panel["applets"]:
             applet["config"] = clean_config(applet.get("config", {}), applet["plugin"])
+            clean_launchers(applet["config"], applet["plugin"])
     return layout
 
 

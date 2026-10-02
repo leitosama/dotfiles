@@ -98,7 +98,8 @@ function loadDefault() {
     }
     addWidget(top, "org.kde.plasma.systemtray");
 
-    // Dock: virtual desktops and pinned apps, as wide as its content, hidden until needed
+    // Dock: virtual desktops and pinned apps, as wide as its content, hidden until needed.
+    // Only the default browser and KDE apps are pinned, as kde-panels-save keeps them
     const dock = new Panel;
     dock.location = "bottom";
     dock.lengthMode = "fit";
@@ -111,8 +112,6 @@ function loadDefault() {
             "applications:org.kde.konsole.desktop",
             "preferred://browser",
             "applications:org.kde.dolphin.desktop",
-            "applications:md.obsidian.Obsidian.desktop",
-            "applications:org.telegram.desktop.desktop",
         ].filter(launcherInstalled),
         unhideOnAttention: false,
     });
