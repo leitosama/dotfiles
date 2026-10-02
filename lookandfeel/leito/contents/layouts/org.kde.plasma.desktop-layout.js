@@ -10,7 +10,100 @@ var plasma = getApiVersion(1);
 // BEGIN SAVED LAYOUT: written by kde-panels-save from plasmashell's dumpCurrentLayoutJS
 // (the format Plasma's own Look and Feel Explorer saves); don't edit by hand, change the
 // panels on the desktop and save again. null until the first save: the panels below are used.
-var layout = null;
+var layout = {
+    "desktops": [],
+    "panels": [
+        {
+            "alignment": "center",
+            "applets": [
+                {
+                    "config": {
+                        "/General": {
+                            "favoritesPortedToKAstats": "true"
+                        }
+                    },
+                    "plugin": "org.kde.plasma.kickoff"
+                },
+                {
+                    "config": {},
+                    "plugin": "org.kde.plasma.appmenu"
+                },
+                {
+                    "config": {},
+                    "plugin": "org.kde.plasma.panelspacer"
+                },
+                {
+                    "config": {
+                        "/Appearance": {
+                            "dateDisplayFormat": "BesideTime",
+                            "use24hFormat": "2"
+                        }
+                    },
+                    "plugin": "org.kde.plasma.digitalclock"
+                },
+                {
+                    "config": {},
+                    "plugin": "org.kde.plasma.panelspacer"
+                },
+                {
+                    "config": {},
+                    "plugin": "org.kde.plasma.systemtray"
+                }
+            ],
+            "config": {
+                "/": {
+                    "formfactor": "2",
+                    "immutability": "1",
+                    "lastScreen": "0",
+                    "wallpaperplugin": "org.kde.image"
+                }
+            },
+            "height": 1.6666666666666667,
+            "hiding": "normal",
+            "lengthMode": "fill",
+            "location": "top",
+            "maximumLength": 106.66666666666667,
+            "minimumLength": 106.66666666666667,
+            "offset": 0,
+            "opacity": "adaptive"
+        },
+        {
+            "alignment": "center",
+            "applets": [
+                {
+                    "config": {},
+                    "plugin": "org.kde.plasma.pager"
+                },
+                {
+                    "config": {
+                        "/General": {
+                            "launchers": "applications:org.kde.konsole.desktop,preferred://browser,applications:org.kde.dolphin.desktop,applications:md.obsidian.Obsidian.desktop",
+                            "unhideOnAttention": "false"
+                        }
+                    },
+                    "plugin": "org.kde.plasma.icontasks"
+                }
+            ],
+            "config": {
+                "/": {
+                    "formfactor": "2",
+                    "immutability": "1",
+                    "lastScreen": "0",
+                    "wallpaperplugin": "org.kde.image"
+                }
+            },
+            "height": 2.6666666666666665,
+            "hiding": "autohide",
+            "lengthMode": "fit",
+            "location": "bottom",
+            "maximumLength": 106.66666666666667,
+            "minimumLength": 106.66666666666667,
+            "offset": 0,
+            "opacity": "adaptive"
+        }
+    ],
+    "serializationFormatVersion": "1"
+};
 // END SAVED LAYOUT
 
 function widgetInstalled(plugin) {
