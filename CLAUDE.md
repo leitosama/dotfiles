@@ -65,6 +65,8 @@ See [ADR-0002](docs/adr/0002-gnu-stow-single-clone.md) for the reasoning.
   `lookandfeel/leito/contents/layouts/`: its `var layout` block is written by `kde-panels-save`
   (never by hand), `kde-panels-load` applies it; the code around the block filters out
   widgets and apps missing on the machine.
+  Apps you don't want from the distro (games, bundled extras) go to `kde_unwanted_apps` in
+  `gui.yaml`, one list with the reason in a comment: excluded from Fedora's group and removed.
   Never symlink rc files that Plasma rewrites and never version whole rc files (they carry
   machine data: file dialog history, desktop file names, bookmarks); only files KDE writes on
   explicit edits (color schemes, konsole profiles) go to `stow/kde/`. The Global Theme is linked
