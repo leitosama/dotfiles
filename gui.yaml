@@ -37,8 +37,8 @@
       default: [stow, flatpak, xclip, xsel, wl-clipboard]
     # Fedora ships the dark Papirus variant as its own package
     kde_theme_packages:
-      default: [papirus-icon-theme]
-      RedHat: [papirus-icon-theme, papirus-icon-theme-dark]
+      default: [papirus-icon-theme, ttf-cascadia-mono-nerd]
+      RedHat: [papirus-icon-theme, papirus-icon-theme-dark, cascadia-mono-nf-fonts]
     # Plasma itself and the apps tied to the session; another distro needs a line
     # here (Fedora's group already includes the basic apps: konsole, dolphin...)
     kde_desktop:

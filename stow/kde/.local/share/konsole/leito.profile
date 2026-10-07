@@ -1,6 +1,6 @@
 [Appearance]
 ColorScheme=OneDarkProNightFlat
-Font=Noto Sans Mono,14,-1,5,400,0,0,0,0,0,0,0,0,0,0,1
+Font=Cascadia Mono NF Light,14,-1,5,300,0,0,0,0,0,0,0,0,0,0,1,Regular,0,0
 
 [General]
 Command=/bin/zsh
