@@ -1,13 +1,14 @@
 # region other
 
-export PATH="$PATH:$HOME/.local/bin:$HOME/go/bin:$HOME/.pdtm/go/bin:$HOME/.yandex-cloud/bin"
+source $HOME/.config/zsh/path.zsh
+
+# ADR-0009
+export NPM_CONFIG_PREFIX="$HOME/.npm-global"
 
 HISTFILE=~/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 setopt appendhistory
-
-source $HOME/.config/zsh/path.zsh
 
 # Must run after PATH is set and before compinit (puts completions dir on fpath)
 source $HOME/.config/zsh/completions.zsh
