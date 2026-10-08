@@ -54,6 +54,8 @@ desktop ([ADR-0007](docs/adr/0007-kde-global-theme-and-settings-keys.md)):
   the Konsole scheme are in the [`kde`](stow/kde) stow package (with the konsole profiles).
   btop gets the same palette (and Aura) from the [`btop`](stow/btop) stow package; the active
   one is `btop_theme` in `gui.yaml`, set as `color_theme` in `~/.config/btop/btop.conf`.
+  htop (installed by `cli.yaml`) has no theme files and draws with the terminal's colors, so
+  `htop_color_scheme: 0` (Default) shows it in One Dark under this Konsole scheme, over SSH too.
 - **Global Theme** [`leito`](lookandfeel/leito): the same theme defaults plus the panel layout
   as a [Plasma script](lookandfeel/leito/contents/layouts/org.kde.plasma.desktop-layout.js).
   Linked as a whole directory to `~/.local/share/plasma/look-and-feel/leito`.

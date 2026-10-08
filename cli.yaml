@@ -9,6 +9,10 @@
     stow_packages:
       - zsh
       - starship
+    # htop has no theme files: its schemes draw with the terminal's 16 colors.
+    # 0 (Default) keeps the terminal background, so under the OneDarkProNightFlat
+    # Konsole scheme (stow/kde) it is One Dark, over SSH too. 5 is Black Night
+    htop_color_scheme: 0
   tasks:
     - name: Install zsh
       become: "{{ 'false' if ansible_facts['os_family'] == 'Darwin' else 'true' }}"
@@ -19,6 +23,7 @@
           - git
           - vim
           - stow
+          - htop
     - name: Create .config folder
       ansible.builtin.file:
         state: directory
@@ -84,6 +89,16 @@
 
     - name: Link configs from the repo
       ansible.builtin.import_tasks: tasks/stow.yaml
+
+    # htop rewrites htoprc when settings change in its UI, so the file is not
+    # versioned, only this key; it reads a file holding just this line
+    - name: Set the htop color scheme
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_facts['env']['HOME'] }}/.config/htop/htoprc"
+        regexp: '^color_scheme='
+        line: "color_scheme={{ htop_color_scheme }}"
+        create: true
+        mode: '0600'  # what htop itself writes
 
     # An old-style ~/.zshrc symlink into the repo would make the stub below
     # get written into the clone
