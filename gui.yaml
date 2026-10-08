@@ -9,9 +9,12 @@
     # like the CLI configs. Settings are keys below, not files (ADR-0007)
     stow_packages:
       - kde
+      - btop
     # Global Theme: theme defaults + panel layout script, linked as one directory
     kde_lookandfeel: leito
     kde_lookandfeel_dir: "{{ ansible_facts['env']['HOME'] }}/.local/share/plasma/look-and-feel/{{ kde_lookandfeel }}"
+    # A theme from stow/btop/.config/btop/themes, file name without .theme
+    btop_theme: OneDarkProNightFlat
     # Keys written with kwriteconfig6 on every run, only where the value differs; the
     # theme part matches lookandfeel/leito/contents/defaults. Colors themselves are
     # applied by Plasma at login from the ColorScheme file (it compares the file hash)
@@ -53,6 +56,7 @@
       - kwalletmanager  # D-Bus client of kwalletd from the same Plasma
       - kleopatra       # the flatpak bundles its own gnupg against the host ~/.gnupg
       - filelight       # the flatpak has no filesystem access, can't scan the disk
+      - btop            # process monitor, the sandbox hides the host's processes
       # PIM runs on Akonadi (a session service) and the host gpg-agent
       - kontact
       - kmail
@@ -325,6 +329,16 @@
       when: item.stdout != item.item.value | string
       changed_when: true
       notify: Remind to log in again
+
+    # btop rewrites btop.conf on exit (keeping the values), so the file is not
+    # versioned, only this key
+    - name: Set the btop theme
+      ansible.builtin.lineinfile:
+        path: "{{ ansible_facts['env']['HOME'] }}/.config/btop/btop.conf"
+        regexp: '^color_theme\s*='
+        line: 'color_theme = "{{ btop_theme }}"'
+        create: true
+        mode: '0644'
 
     # kde-gtk-config syncs icons, colors and the dark preference at login, but
     # keeps whatever GTK theme name is set; only Breeze GTK reads Plasma's colors

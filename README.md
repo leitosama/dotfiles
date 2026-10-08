@@ -52,6 +52,8 @@ desktop ([ADR-0007](docs/adr/0007-kde-global-theme-and-settings-keys.md)):
 
 - **Theme**: One Dark Pro Night Flat on Breeze, Papirus-Dark icons. The color scheme and
   the Konsole scheme are in the [`kde`](stow/kde) stow package (with the konsole profiles).
+  btop gets the same palette (and Aura) from the [`btop`](stow/btop) stow package; the active
+  one is `btop_theme` in `gui.yaml`, set as `color_theme` in `~/.config/btop/btop.conf`.
 - **Global Theme** [`leito`](lookandfeel/leito): the same theme defaults plus the panel layout
   as a [Plasma script](lookandfeel/leito/contents/layouts/org.kde.plasma.desktop-layout.js).
   Linked as a whole directory to `~/.local/share/plasma/look-and-feel/leito`.
@@ -59,7 +61,7 @@ desktop ([ADR-0007](docs/adr/0007-kde-global-theme-and-settings-keys.md)):
   KRunner on Meta, tiling gap) written with `kwriteconfig6` on every run, only where the value
   differs. Everything else stays local to the machine (file associations, mouse, wallpaper).
 - Plasma and the apps that talk to the session or the host (konsole, dolphin, spectacle,
-  kdeconnect, kwalletmanager, kleopatra, filelight, Kontact and the rest of PIM) are distro
+  kdeconnect, kwalletmanager, kleopatra, filelight, btop, Kontact and the rest of PIM) are distro
   packages. Standalone apps (okular, gwenview, kate, haruna, elisa, kdiff3…, the full list is
   `kde_flatpak_apps` in `gui.yaml`) are user flatpaks from Flathub, so on a rolling distro their
   version doesn't follow Qt/KDE Frameworks upgrades ([ADR-0006](docs/adr/0006-gui-distro-agnostic-flatpak-apps.md)).

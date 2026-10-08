@@ -1,0 +1,80 @@
+# Theme: OneDark Pro Night Flat
+# Palette of the OneDarkProNightFlat Konsole/KDE color scheme
+
+# Main bg
+theme[main_bg]="#16191d"
+
+# Main text color
+theme[main_fg]="#abb2bf"
+
+# Title color for boxes
+theme[title]="#d7dae0"
+
+# Highlight color for keyboard shortcuts
+theme[hi_fg]="#4aa5f0"
+
+# Background color of selected item in processes box
+theme[selected_bg]="#23272e"
+
+# Foreground color of selected item in processes box
+theme[selected_fg]="#d7dae0"
+
+# Color of inactive/disabled text
+theme[inactive_fg]="#7f848e"
+
+# Misc colors for processes box including mini cpu graphs, details memory graph and details status text
+theme[proc_misc]="#4aa5f0"
+
+# Box outline colors
+theme[cpu_box]="#3f4451"
+theme[mem_box]="#3f4451"
+theme[net_box]="#3f4451"
+theme[proc_box]="#3f4451"
+
+# Box divider line and small boxes line color
+theme[div_line]="#3f4451"
+
+# Temperature graph colors
+theme[temp_start]="#8cc265"
+theme[temp_mid]="#d18f52"
+theme[temp_end]="#e05561"
+
+# CPU graph colors
+theme[cpu_start]="#8cc265"
+theme[cpu_mid]="#d18f52"
+theme[cpu_end]="#e05561"
+
+# Mem/Disk free meter
+theme[free_start]="#42b3c2"
+theme[free_mid]="#4aa5f0"
+theme[free_end]="#c162de"
+
+# Mem/Disk cached meter
+theme[cached_start]="#42b3c2"
+theme[cached_mid]="#4aa5f0"
+theme[cached_end]="#c162de"
+
+# Mem/Disk available meter
+theme[available_start]="#8cc265"
+theme[available_mid]="#d18f52"
+theme[available_end]="#e05561"
+
+# Mem/Disk used meter
+theme[used_start]="#8cc265"
+theme[used_mid]="#d18f52"
+theme[used_end]="#e05561"
+
+# Download graph colors
+theme[download_start]="#42b3c2"
+theme[download_mid]="#4aa5f0"
+theme[download_end]="#c162de"
+
+# Upload graph colors
+theme[upload_start]="#8cc265"
+theme[upload_mid]="#d18f52"
+theme[upload_end]="#e05561"
+
+# Process box color gradient for threads, mem and cpu usage
+theme[process_start]="#42b3c2"
+theme[process_mid]="#4aa5f0"
+theme[process_end]="#c162de"
