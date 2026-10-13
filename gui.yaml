@@ -38,6 +38,12 @@
     # ---- Install. Per ansible_facts['os_family']; `default` is for the rest ----
     gui_base_packages:
       default: [stow, flatpak, xclip, xsel, wl-clipboard]
+    # Terminal apps from PyPI, user install: not packaged by the distros nor on Flathub
+    pipx_package:
+      default: pipx
+      Archlinux: python-pipx
+    pipx_apps:
+      - frogmouth       # markdown browser: follows links between files (ADR-0010)
     # Fedora ships the dark Papirus variant as its own package
     kde_theme_packages:
       default: [papirus-icon-theme, ttf-cascadia-mono-nerd]
@@ -214,6 +220,20 @@
         name: "{{ kde_removed_packages }}"
         state: absent
 
+
+    - name: Install pipx
+      become: true
+      ansible.builtin.package:
+        name: "{{ pipx_package[ansible_facts['os_family']] | default(pipx_package['default']) }}"
+        state: present
+
+    # Each app gets its own venv, so frogmouth's pinned old textual can't clash with
+    # the system Python packages; binaries go to ~/.local/bin (path.list)
+    - name: Install pipx apps
+      community.general.pipx:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ pipx_apps }}"
 
     # A user installation sees only user remotes, the system flathub (if any)
     # doesn't count

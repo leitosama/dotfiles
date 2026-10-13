@@ -14,6 +14,7 @@ when a decision changes, add a new ADR and mark the old one `Superseded by ADR-N
 | [0007](0007-kde-global-theme-and-settings-keys.md) | KDE as a Global Theme package and settings keys, no konsave snapshot | Proposed |
 | [0008](0008-drop-claude-action.md) | Drop the Claude GitHub Action | Proposed |
 | [0009](0009-npm-prefix-via-environment.md) | npm global prefix via environment, not a stow package | Proposed |
+| [0010](0010-markdown-readers-glow-frogmouth.md) | Markdown in the terminal: glow everywhere, frogmouth on the desktop | Proposed |
 
 ## Writing a new ADR
 

@@ -38,6 +38,17 @@ alias vi="vim"
 alias oldvim="vim"
 export EDITOR=/bin/vim
 alias git-github="git config --global user.name leitosama;git config --global user.email fs.leito@gmail.com"
+# Markdown reader (ADR-0010): frogmouth on the desktop (gui.yaml), glow elsewhere
+# (cli.yaml), raw text in less where neither is installed. frogmouth opens files only:
+# stdin (`curl … | md`) and directories go to glow
+md() {
+  if [[ -t 0 ]] && (( $+commands[frogmouth] )) && [[ $# -eq 0 || -f $1 ]]; then frogmouth "$@"
+  elif (( ! $+commands[glow] )); then less "$@"
+  elif (( $# )); then glow -p "$@"
+  elif [[ -t 0 ]]; then glow
+  else glow -p -
+  fi
+}
 alias lessh='LESSOPEN="| /usr/bin/src-hilite-lesspipe.sh %s" less -M '
 
 bindkey "^[[1;5C" forward-word
