@@ -38,17 +38,13 @@ alias vi="vim"
 alias oldvim="vim"
 export EDITOR=/bin/vim
 alias git-github="git config --global user.name leitosama;git config --global user.email fs.leito@gmail.com"
-# Markdown reader (ADR-0010): glow when installed (cli.yaml), else just highlighted.
+# Markdown reader (ADR-0010): glow (cli.yaml), raw text in less where it isn't packaged.
 # No args: glow's file browser, or stdin when piped (`curl … | md`)
 md() {
-  if (( $+commands[glow] )); then
-    if (( $# )); then glow -p "$@"
-    elif [[ -t 0 ]]; then glow
-    else glow -p -
-    fi
-  elif (( $+commands[bat] )); then bat -l md "$@"
-  elif (( $+commands[batcat] )); then batcat -l md "$@"
-  else less "$@"
+  if (( ! $+commands[glow] )); then less "$@"
+  elif (( $# )); then glow -p "$@"
+  elif [[ -t 0 ]]; then glow
+  else glow -p -
   fi
 }
 alias lessh='LESSOPEN="| /usr/bin/src-hilite-lesspipe.sh %s" less -M '

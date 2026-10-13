@@ -108,7 +108,7 @@ on a machine where Plasma already made its default panels, run `kde-panels-load`
 
 `md` (in [`zshrc`](stow/zsh/.config/zsh/zshrc)) renders markdown with
 [glow](https://github.com/charmbracelet/glow), installed by `cli.yaml`; where glow is not
-packaged (older Debian/Ubuntu) it falls back to `bat`/`less`
+packaged (older Debian/Ubuntu) it falls back to `less`
 ([ADR-0010](docs/adr/0010-markdown-readers-glow-frogmouth.md)).
 
 ```sh
@@ -118,8 +118,9 @@ curl -s … | md        # stdin
 frogmouth README.md   # desktop only (gui.yaml): follows links between files
 ```
 
-Links in glow's output are OSC 8 hyperlinks: Ctrl+click in Konsole (the `leito` profile
-allows them).
+Links open with Ctrl+click in Konsole. glow 3.0+ emits OSC 8 hyperlinks (the `leito` profile
+allows them), so the link text is clickable; glow 2.x prints the URL next to the text, which
+Konsole detects by itself.
 
 ## Zsh PATH and completions
 

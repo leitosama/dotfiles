@@ -25,7 +25,7 @@
           - stow
           - htop
     # Markdown reader behind `md` (zshrc). Packaged in Arch, Fedora, Debian 13+ and
-    # Homebrew; older Debian/Ubuntu lack it, `md` falls back to bat/less there, so a
+    # Homebrew; older Debian/Ubuntu lack it, `md` falls back to less there, so a
     # missing package must not stop the bootstrap (ADR-0010)
     - name: Install glow
       block:
@@ -36,7 +36,7 @@
       rescue:
         - name: Report glow is not packaged
           ansible.builtin.debug:
-            msg: "SKIP: no glow package on this host, `md` falls back to bat/less"
+            msg: "SKIP: no glow package on this host, `md` falls back to less"
 
     - name: Create .config folder
       ansible.builtin.file:

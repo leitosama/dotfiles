@@ -17,10 +17,12 @@ On the desktop it is also useful to follow links between files of a documentatio
   Where it is not packaged (older Debian/Ubuntu) the task reports `SKIP` instead of failing.
 - **frogmouth** in `gui.yaml`, a user install with pipx: it is not packaged by the distros
   nor on Flathub.
-- One entry point, the `md` function in `zshrc`: `glow` when it is installed, else `bat`
-  (`batcat` on Debian) or `less`. frogmouth is called by name.
-- Konsole's `leito` profile allows OSC 8 links (`AllowEscapedLinks`), which glow emits, so
-  links in its output open on click.
+- One entry point, the `md` function in `zshrc`: `glow` when it is installed, else `less`
+  (raw text). No `bat` fallback: nothing installs it, it would only add a branch.
+  frogmouth is called by name.
+- Konsole's `leito` profile allows OSC 8 links (`AllowEscapedLinks`). glow 3.0+ emits them,
+  so the link text opens on click; glow 2.x (Fedora 43/44) prints the URL next to the text,
+  which Konsole detects as a plain URL.
 
 ## Options Considered
 
@@ -33,8 +35,8 @@ On the desktop it is also useful to follow links between files of a documentatio
 | Maintenance | glow active (Charm); frogmouth's last release is 0.9.2 (2023, pins textual 0.43) |
 | Familiarity | glow is the best known terminal markdown renderer |
 
-**Pros:** glow renders well, has a file browser, a pager, stdin input and clickable OSC 8
-links; frogmouth adds what glow lacks: following links between files, history, bookmarks.
+**Pros:** glow renders well, has a file browser, a pager, stdin input and, from 3.0,
+clickable OSC 8 links; frogmouth adds what glow lacks: following links between files, history, bookmarks.
 **Cons:** frogmouth is unmaintained, kept isolated in its own pipx venv; replaceable without
 touching `md`.
 
@@ -68,7 +70,7 @@ servers need it; it can be added to the desktop later without changing `md`.
 
 ## Consequences
 
-- `md file.md`, `md` (browser) and `… | md` work the same on every host, degrading to bat/less.
+- `md file.md`, `md` (browser) and `… | md` work the same on every host, degrading to `less`.
 - pipx becomes a GUI dependency, the place for other PyPI-only terminal apps.
 - frogmouth may break on a future Python; then drop it or swap it, `md` is not affected.
 
