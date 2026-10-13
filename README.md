@@ -104,6 +104,23 @@ launcher copies, anything with a path in `$HOME`) and task manager pins other th
 browser and `org.kde.*` apps (pin the rest by hand on each machine). A new user gets the panels at first login;
 on a machine where Plasma already made its default panels, run `kde-panels-load` once.
 
+## Reading markdown
+
+`md` (in [`zshrc`](stow/zsh/.config/zsh/zshrc)) renders markdown with
+[glow](https://github.com/charmbracelet/glow), installed by `cli.yaml`; where glow is not
+packaged (older Debian/Ubuntu) it falls back to `bat`/`less`
+([ADR-0010](docs/adr/0010-markdown-readers-glow-frogmouth.md)).
+
+```sh
+md README.md          # pager
+md                    # file browser over the current directory
+curl -s … | md        # stdin
+frogmouth README.md   # desktop only (gui.yaml): follows links between files
+```
+
+Links in glow's output are OSC 8 hyperlinks: Ctrl+click in Konsole (the `leito` profile
+allows them).
+
 ## Zsh PATH and completions
 
 ### PATH

@@ -19,8 +19,8 @@ user-facing usage lives in [README.md](README.md), the reasons behind the layout
 
 | Path | What |
 |------|------|
-| `cli.yaml` | CLI playbook: any UNIX/Linux. Packages (zsh, git, vim, stow), starship, Zi, default shell, `~/.dotfiles` clone, stow links, `~/.zshrc` stub |
-| `gui.yaml` | GUI playbook: KDE on Linux (Arch, Fedora; per-`os_family` lists). Plasma and session apps from the distro, end-user apps via user flatpak, the `kde` stow package, the `leito` Global Theme, `kde_settings` keys |
+| `cli.yaml` | CLI playbook: any UNIX/Linux. Packages (zsh, git, vim, stow, glow), starship, Zi, default shell, `~/.dotfiles` clone, stow links, `~/.zshrc` stub |
+| `gui.yaml` | GUI playbook: KDE on Linux (Arch, Fedora; per-`os_family` lists). Plasma and session apps from the distro, end-user apps via user flatpak, PyPI-only terminal apps via pipx, the `kde` stow package, the `leito` Global Theme, `kde_settings` keys |
 | `stow/<package>/` | GNU Stow packages mirroring `$HOME` (`stow/zsh/.config/zsh/zshrc` → `~/.config/zsh/zshrc`) |
 | `tasks/` | Tasks shared by both playbooks: clone/update `~/.dotfiles`, stow |
 | `lookandfeel/leito/` | Global Theme: theme defaults + panel layout script (Plasma JS); linked as one directory to `~/.local/share/plasma/look-and-feel/leito` |
