@@ -17,9 +17,9 @@ On the desktop it is also useful to follow links between files of a documentatio
   Where it is not packaged (older Debian/Ubuntu) the task reports `SKIP` instead of failing.
 - **frogmouth** in `gui.yaml`, a user install with pipx: it is not packaged by the distros
   nor on Flathub.
-- One entry point, the `md` function in `zshrc`: `glow` when it is installed, else `less`
-  (raw text). No `bat` fallback: nothing installs it, it would only add a branch.
-  frogmouth is called by name.
+- One entry point, the `md` function in `zshrc`: frogmouth where it is installed (the
+  desktop), glow otherwise, `less` (raw text) where neither is. Piped input and directories
+  always go to glow, frogmouth only opens files. No `bat` fallback: nothing installs it.
 - Konsole's `leito` profile allows OSC 8 links (`AllowEscapedLinks`). glow 3.0+ emits them,
   so the link text opens on click; glow 2.x (Fedora 43/44) prints the URL next to the text,
   which Konsole detects as a plain URL.
@@ -37,8 +37,8 @@ On the desktop it is also useful to follow links between files of a documentatio
 
 **Pros:** glow renders well, has a file browser, a pager, stdin input and, from 3.0,
 clickable OSC 8 links; frogmouth adds what glow lacks: following links between files, history, bookmarks.
-**Cons:** frogmouth is unmaintained, kept isolated in its own pipx venv; replaceable without
-touching `md`.
+**Cons:** frogmouth is unmaintained, kept isolated in its own pipx venv; if it breaks,
+uninstalling it makes `md` fall back to glow.
 
 ### Option B: leaf (RivoLink/leaf)
 
@@ -70,9 +70,10 @@ servers need it; it can be added to the desktop later without changing `md`.
 
 ## Consequences
 
-- `md file.md`, `md` (browser) and `… | md` work the same on every host, degrading to `less`.
+- `md file.md`, `md` and `… | md` work on every host: frogmouth on the desktop, glow on
+  servers, `less` where glow is not packaged.
 - pipx becomes a GUI dependency, the place for other PyPI-only terminal apps.
-- frogmouth may break on a future Python; then drop it or swap it, `md` is not affected.
+- frogmouth may break on a future Python; then drop it from `pipx_apps` and `md` uses glow.
 
 ## Action Items
 
