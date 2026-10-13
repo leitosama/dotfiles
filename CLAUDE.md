@@ -7,7 +7,8 @@ user-facing usage lives in [README.md](README.md), the reasons behind the layout
 ## Why this repo exists
 
 1. **A predictable terminal on any UNIX/Linux box**: same shell, prompt, plugins, PATH and
-   completions on a laptop, a server or a fresh VM (Linux distros and macOS).
+   completions on a laptop, a server or a fresh VM. Targets: Fedora and Arch (desktop),
+   AlmaLinux (servers, RPM-based), Debian/Ubuntu, macOS (Homebrew).
 2. **CLI and GUI kept in sync**: terminal configs and the KDE desktop are both versioned here.
 3. It is used in three moments, so every change must keep them working:
    - **bootstrap** a new machine (one command, possibly `ansible-pull` from cloud-init);
@@ -27,6 +28,7 @@ user-facing usage lives in [README.md](README.md), the reasons behind the layout
 | `docs/adr/` | Architecture Decision Records |
 | `.github/workflows/lint.yml` | CI: `ansible-lint` + `ansible-playbook --syntax-check` |
 | `.github/dependabot.yml`, `workflows/dependabot-auto-merge.yml` | Dependency updates, see [ADR-0005](docs/adr/0005-dependabot-and-claude-action.md), [ADR-0008](docs/adr/0008-drop-claude-action.md) |
+| `.claude/` | Claude Code cloud sessions: SessionStart hook installing the lint tools |
 | `requirements.txt` | Python deps for running and linting (`ansible`, `ansible-lint`) |
 
 ## How the CLI playbook works (invariants)
@@ -53,7 +55,9 @@ See [ADR-0002](docs/adr/0002-gnu-stow-single-clone.md) for the reasoning.
 - **New package** → new `stow/<name>/` dir and add `<name>` to `stow_packages` in `cli.yaml`
   (or in `gui.yaml` for desktop-only packages, like `kde`).
 - **New CLI tool to install** → `cli.yaml`; keep it OS-agnostic (`ansible.builtin.package`,
-  Darwin has no `become`) or guard it with `when:` on `ansible_facts`.
+  Darwin has no `become`) or guard it with `when:` on `ansible_facts`. Before relying on a
+  feature, check the version each target ships (Fedora stable, Arch, AlmaLinux with EPEL,
+  Debian stable, Homebrew), not upstream's latest; write "since vN" when it matters.
 - **GUI/KDE change** → `gui.yaml` (Arch and Fedora: `ansible.builtin.package`, distro differences
   in the per-`os_family` maps). A new KDE app goes to `kde_flatpak_apps` if it is standalone, to
   `kde_distro_apps` if the sandbox breaks it (host services, gpg, disk access), see
@@ -71,6 +75,11 @@ See [ADR-0002](docs/adr/0002-gnu-stow-single-clone.md) for the reasoning.
   machine data: file dialog history, desktop file names, bookmarks); only files KDE writes on
   explicit edits (color schemes, konsole profiles) go to `stow/kde/`. The Global Theme is linked
   as a directory because KPackage ignores per-file links that point outside the package.
+- **Aliases and shell functions** (`stow/zsh/.config/zsh/zshrc`) are saved commands that must
+  work on every machine the configs land on, servers included. Branch on `$+commands[...]`
+  and fall back only to what the base system or `cli.yaml` installs, never to a tool nothing
+  installs. When one name picks between tools (desktop vs server), say which tool it runs
+  where before writing it.
 - **New zsh plugin** → `zi light …` in `stow/zsh/.config/zsh/zshrc` (see [ADR-0003](docs/adr/0003-zi-zsh-plugin-manager.md)).
 - **PATH / completions** → `path-add` / `comp-add` helpers, lists in `stow/zsh/.config/zsh/`
   (details in README).
@@ -87,7 +96,9 @@ ansible-lint
 ansible-playbook -i localhost, --syntax-check cli.yaml gui.yaml
 ```
 
-CI runs the same on every push and PR (`.github/workflows/lint.yml`). Lint config is in
+CI runs the same on every push and PR (`.github/workflows/lint.yml`); its result on the PR
+counts as the check too. In Claude Code cloud sessions `.claude/hooks/session-start.sh`
+installs `requirements.txt` and zsh (to try functions from `stow/zsh`). Lint config is in
 `.ansible-lint` (profile `production`, `strict: true`: warnings fail too). CI also sets
 `ANSIBLE_INJECT_FACTS_AS_VARS=false`, the future ansible-core default, so use
 `ansible_facts['env']['HOME']`, never `ansible_env.HOME` or `ansible_os_family`. Fix findings instead of silencing them; a `# noqa`
@@ -112,8 +123,6 @@ packages, starship and Zi installers. Repo settings needed:
   not what the task name already says.
 - Commit subjects are short and imperative; a `[zsh]`, `[gui]`, `[ansible]` prefix is common.
 - English everywhere in the repo (docs, comments, commits).
-
-## Known issues / planned work
-
-- Rename `cli.yaml` → `cli.yaml` for symmetry with `gui.yaml`. Postponed (the owner will
-  do it): it breaks existing `ansible-pull … cli.yaml` commands, update README with it.
+- README is user-facing usage, kept short: no section per tool, no notes on settings,
+  version quirks or why a tool was chosen. Those go in a comment next to the code or in
+  an ADR. A README change is for a new subsystem or a changed way of running things.
